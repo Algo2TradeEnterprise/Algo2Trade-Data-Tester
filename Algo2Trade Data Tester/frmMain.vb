@@ -190,8 +190,8 @@ Public Class frmMain
     Private _canceller As CancellationTokenSource
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        dtpckrFromDate.Value = My.Settings.FromDate
-        dtpckrToDate.Value = My.Settings.ToDate
+        If My.Settings.FromDate <> Date.MinValue Then dtpckrFromDate.Value = My.Settings.FromDate
+        If My.Settings.ToDate <> Date.MinValue Then dtpckrToDate.Value = My.Settings.ToDate
         txtToken1.Text = My.Settings.Token1
         txtSymbol1.Text = My.Settings.Symbol1
         txtToken2.Text = My.Settings.Token2
