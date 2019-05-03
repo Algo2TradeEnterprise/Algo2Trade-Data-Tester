@@ -9,11 +9,11 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("Algo2Trade Data Tester")>
-<Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("")>
+<Assembly: AssemblyDescription("Together, lets get richer")>
+<Assembly: AssemblyCompany("Hubristic Purveyor Pvt. Ltd.")>
 <Assembly: AssemblyProduct("Algo2Trade Data Tester")>
 <Assembly: AssemblyCopyright("Copyright ©  2019")>
-<Assembly: AssemblyTrademark("")>
+<Assembly: AssemblyTrademark("Algo2Trade")>
 
 <Assembly: ComVisible(False)>
 
