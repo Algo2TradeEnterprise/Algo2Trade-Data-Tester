@@ -190,6 +190,7 @@ Public Class frmMain
     Private _canceller As CancellationTokenSource
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.Text = String.Format("Algo2Trade Data Tester v{0}", My.Application.Info.Version)
         If My.Settings.FromDate <> Date.MinValue Then dtpckrFromDate.Value = My.Settings.FromDate
         If My.Settings.ToDate <> Date.MinValue Then dtpckrToDate.Value = My.Settings.ToDate
         txtToken1.Text = My.Settings.Token1
@@ -240,12 +241,19 @@ Public Class frmMain
             If token1 IsNot Nothing AndAlso token1.Trim <> "" AndAlso
                 symbol1 IsNot Nothing AndAlso symbol1.Trim <> "" Then
                 If instrumentList Is Nothing Then instrumentList = New Dictionary(Of Integer, String)
+                symbol1 = symbol1.ToUpper
                 instrumentList.Add(Val(token1), symbol1)
+            Else
+                Throw New ApplicationException("Instrument 1 details cannot be blank")
             End If
+
             If token2 IsNot Nothing AndAlso token2.Trim <> "" AndAlso
                 symbol2 IsNot Nothing AndAlso symbol2.Trim <> "" Then
                 If instrumentList Is Nothing Then instrumentList = New Dictionary(Of Integer, String)
+                symbol2 = symbol2.ToUpper
                 instrumentList.Add(Val(token2), symbol2)
+            Else
+                symbol2 = Nothing
             End If
 
             Dim historicalData As Dictionary(Of Date, PairPayload) = Nothing
@@ -259,14 +267,29 @@ Public Class frmMain
             OnHeartbeat("Payload generation complete")
 
             Dim templateFile As String = GetTextBoxText_ThreadSafe(txtFilePath)
-            Dim outputFilename As String = Path.Combine(Path.GetDirectoryName(templateFile), String.Format("{0} {1}_{2}_{3}_{4}_{5}_{6}.xlsx",
-                                                                                                           Path.GetFileNameWithoutExtension(templateFile),
-                                                                                                           Now.Year, Now.Month, Now.Day,
+            Dim combinationOfSymbolName As String = String.Format("{0}{1}{2}", symbol1, If(symbol2 IsNot Nothing, "_", ""), If(symbol2 IsNot Nothing, symbol2, ""))
+            Dim combinationOfDates As String = String.Format("{0}{1}{2}", fromDate.ToShortDateString, If(fromDate <> toDate, " to ", ""), If(fromDate <> toDate, toDate.ToShortDateString, ""))
+            Dim outputFilename As String = Path.Combine(Path.GetDirectoryName(templateFile), String.Format("{0} {1} {2}_{3}_{4}.xlsx",
+                                                                                                           combinationOfSymbolName.Trim,
+                                                                                                           combinationOfDates.Trim,
                                                                                                            Now.Hour, Now.Minute, Now.Second))
+            If outputFilename.Length > 250 Then
+                OnHeartbeat("Modifying output filename")
+                outputFilename = outputFilename.Substring(0, 250)
+                outputFilename = String.Format("{0}.xlsx", outputFilename)
+            End If
+
             OnHeartbeat("File Copy in progress")
             File.Copy(templateFile, outputFilename)
             OnHeartbeat("Writting Excel")
             Await WriteToExcel(outputFilename, historicalData).ConfigureAwait(False)
+            OnHeartbeat("Process Complete")
+
+            If MessageBox.Show("Do you want to open file?", "Algo2Trade Data Tester", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+                Process.Start(outputFilename)
+            End If
+
+            SetObjectEnableDisable_ThreadSafe(btnStart, True)
         Catch cex As OperationCanceledException
             MsgBox(cex.Message)
         Catch ex As Exception
@@ -383,7 +406,5 @@ Public Class frmMain
             End If
             excelWriter.SaveExcel()
         End Using
-        OnHeartbeat("Process Complete")
-        SetObjectEnableDisable_ThreadSafe(btnStart, True)
     End Function
 End Class
