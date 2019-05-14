@@ -234,7 +234,9 @@ Public Class frmMain
         }
 
         Dim combineInstrumentName As String = String.Format("{0}_{1}", symbolDetails.Instrument1Name, symbolDetails.Instrument2Name)
-        If Not _symbolList.ContainsKey(combineInstrumentName) Then
+        If _symbolList.ContainsKey(combineInstrumentName) Then
+            _symbolList(combineInstrumentName) = symbolDetails
+        Else
             _symbolList.Add(combineInstrumentName, symbolDetails)
             cmbSymbol.Items.Add(combineInstrumentName)
         End If
