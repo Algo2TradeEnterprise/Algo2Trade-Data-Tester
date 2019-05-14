@@ -188,33 +188,58 @@ Public Class frmMain
 #End Region
 
     Private _canceller As CancellationTokenSource
+    Private _symbolList As Dictionary(Of String, PairSymbolDetails)
+    Private _fileName As String = Path.Combine(My.Application.Info.DirectoryPath, "Symbol List.a2t")
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        SetObjectEnableDisable_ThreadSafe(btnStop, False)
         Me.Text = String.Format("Algo2Trade Data Tester v{0}", My.Application.Info.Version)
-        If My.Settings.FromDate <> Date.MinValue Then dtpckrFromDate.Value = My.Settings.FromDate
-        If My.Settings.ToDate <> Date.MinValue Then dtpckrToDate.Value = My.Settings.ToDate
-        txtToken1.Text = My.Settings.Token1
-        txtSymbol1.Text = My.Settings.Symbol1
-        txtToken2.Text = My.Settings.Token2
-        txtSymbol2.Text = My.Settings.Symbol2
-        txtFilePath.Text = My.Settings.FilePath
-        nmrcInstrument1Column.Value = My.Settings.Column1
-        nmrcInstrument2Column.Value = My.Settings.Column2
+
+        If File.Exists(_fileName) Then _symbolList = Utilities.Strings.DeserializeToCollection(Of Dictionary(Of String, PairSymbolDetails))(_fileName)
+
+        If _symbolList Is Nothing Then _symbolList = New Dictionary(Of String, PairSymbolDetails)
+        If _symbolList.Count > 0 Then
+            For Each symbol In _symbolList.Keys
+                cmbSymbol.Items.Add(symbol)
+            Next
+            cmbSymbol.SelectedIndex = My.Settings.ComboBoxIndex
+        End If
     End Sub
 
     Private Async Sub btnStart_Click(sender As Object, e As EventArgs) Handles btnStart.Click
-        SetObjectEnableDisable_ThreadSafe(btnStart, False)
-        My.Settings.FromDate = dtpckrFromDate.Value
-        My.Settings.ToDate = dtpckrToDate.Value
-        My.Settings.Token1 = txtToken1.Text
-        My.Settings.Symbol1 = txtSymbol1.Text
-        My.Settings.Token2 = txtToken2.Text
-        My.Settings.Symbol2 = txtSymbol2.Text
-        My.Settings.FilePath = txtFilePath.Text
-        My.Settings.Column1 = nmrcInstrument1Column.Value
-        My.Settings.Column2 = nmrcInstrument2Column.Value
-        My.Settings.Save()
         _canceller = New CancellationTokenSource
+
+        SetObjectEnableDisable_ThreadSafe(btnStart, False)
+        SetObjectEnableDisable_ThreadSafe(btnStop, True)
+
+        My.Settings.ComboBoxIndex = GetComboBoxIndex_ThreadSafe(cmbSymbol)
+
+        Dim symbolDetails As PairSymbolDetails = New PairSymbolDetails With {
+            .Instrument1Name = txtSymbol1.Text.Trim,
+            .Instrument1Token = txtToken1.Text.Trim,
+            .Instrument1StartingColumn = nmrcInstrument1Column.Value,
+            .Instrument1LotSize = nmrcInstrument1LotSize.Value,
+            .Instrument1NumberOfLots = nmrcInstrument1NumberOfLots.Value,
+            .Instrument1Brokerage = txtInstrument1Brokerage.Text,
+            .Instrument2Name = txtSymbol2.Text.Trim,
+            .Instrument2Token = txtToken2.Text.Trim,
+            .Instrument2StartingColumn = nmrcInstrument2Column.Value,
+            .Instrument2LotSize = nmrcInstrument2LotSize.Value,
+            .Instrument2NumberOfLots = nmrcInstrument2NumberOfLots.Value,
+            .Instrument2Brokerage = txtInstrument2Brokerage.Text,
+            .EODExitTime = dtpckrEODTime.Value,
+            .FromDate = dtpckrFromDate.Value,
+            .ToDate = dtpckrToDate.Value,
+            .TemplateFilePath = txtFilePath.Text
+        }
+
+        Dim combineInstrumentName As String = String.Format("{0}_{1}", symbolDetails.Instrument1Name, symbolDetails.Instrument2Name)
+        If Not _symbolList.ContainsKey(combineInstrumentName) Then
+            _symbolList.Add(combineInstrumentName, symbolDetails)
+            cmbSymbol.Items.Add(combineInstrumentName)
+        End If
+        Utilities.Strings.SerializeFromCollection(Of Dictionary(Of String, PairSymbolDetails))(_fileName, _symbolList)
+
         Await Task.Run(AddressOf StartProcessing).ConfigureAwait(False)
     End Sub
     Private Async Function StartProcessing() As Task
@@ -268,7 +293,7 @@ Public Class frmMain
 
             Dim templateFile As String = GetTextBoxText_ThreadSafe(txtFilePath)
             Dim combinationOfSymbolName As String = String.Format("{0}{1}{2}", symbol1, If(symbol2 IsNot Nothing, "_", ""), If(symbol2 IsNot Nothing, symbol2, ""))
-            Dim combinationOfDates As String = String.Format("{0}{1}{2}", fromDate.ToShortDateString, If(fromDate <> toDate, " to ", ""), If(fromDate <> toDate, toDate.ToShortDateString, ""))
+            Dim combinationOfDates As String = String.Format("{0}{1}{2}", fromDate.ToString("dd-MM-yy"), If(fromDate <> toDate, " to ", ""), If(fromDate <> toDate, toDate.ToString("dd-MM-yy"), ""))
             Dim outputFilename As String = Path.Combine(Path.GetDirectoryName(templateFile), String.Format("{0} {1} {2}_{3}_{4}.xlsx",
                                                                                                            combinationOfSymbolName.Trim,
                                                                                                            combinationOfDates.Trim,
@@ -288,12 +313,13 @@ Public Class frmMain
             If MessageBox.Show("Do you want to open file?", "Algo2Trade Data Tester", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
                 Process.Start(outputFilename)
             End If
-
-            SetObjectEnableDisable_ThreadSafe(btnStart, True)
         Catch cex As OperationCanceledException
             MsgBox(cex.Message)
         Catch ex As Exception
             MsgBox(ex.ToString)
+        Finally
+            SetObjectEnableDisable_ThreadSafe(btnStart, True)
+            SetObjectEnableDisable_ThreadSafe(btnStop, False)
         End Try
     End Function
 
@@ -403,8 +429,46 @@ Public Class frmMain
                 excelWriter.WriteArrayToExcel(mainRawData, range)
                 Erase mainRawData
                 mainRawData = Nothing
+
+                'After Processing
+                excelWriter.SetData(3, 49, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1LotSize))
+                excelWriter.SetData(3, 50, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2LotSize))
+                excelWriter.SetData(4, 49, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
+                excelWriter.SetData(4, 50, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
+                excelWriter.SetData(5, 49, GetTextBoxText_ThreadSafe(txtInstrument1Brokerage))
+                excelWriter.SetData(5, 50, GetTextBoxText_ThreadSafe(txtInstrument2Brokerage))
+                excelWriter.SetData(8, 49, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Hour)
+                excelWriter.SetData(8, 50, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Minute)
             End If
             excelWriter.SaveExcel()
         End Using
     End Function
+
+    Private Sub cmbSymbol_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbSymbol.SelectedIndexChanged
+        Dim symbol As String = GetComboBoxItem_ThreadSafe(cmbSymbol)
+        If _symbolList IsNot Nothing AndAlso _symbolList.Count > 0 AndAlso _symbolList.ContainsKey(symbol) Then
+            LoadSettings(_symbolList(symbol))
+        End If
+    End Sub
+
+    Private Sub LoadSettings(ByVal data As PairSymbolDetails)
+        txtToken1.Text = data.Instrument1Token
+        txtSymbol1.Text = data.Instrument1Name
+        nmrcInstrument1Column.Value = data.Instrument1StartingColumn
+        nmrcInstrument1LotSize.Value = data.Instrument1LotSize
+        nmrcInstrument1NumberOfLots.Value = data.Instrument1NumberOfLots
+        txtInstrument1Brokerage.Text = data.Instrument1Brokerage
+
+        txtToken2.Text = data.Instrument2Token
+        txtSymbol2.Text = data.Instrument2Name
+        nmrcInstrument2Column.Value = data.Instrument2StartingColumn
+        nmrcInstrument2LotSize.Value = data.Instrument2LotSize
+        nmrcInstrument2NumberOfLots.Value = data.Instrument2NumberOfLots
+        txtInstrument2Brokerage.Text = data.Instrument2Brokerage
+
+        txtFilePath.Text = data.TemplateFilePath
+        dtpckrFromDate.Value = data.FromDate.Date
+        dtpckrToDate.Value = data.ToDate.Date
+        dtpckrEODTime.Value = data.EODExitTime
+    End Sub
 End Class

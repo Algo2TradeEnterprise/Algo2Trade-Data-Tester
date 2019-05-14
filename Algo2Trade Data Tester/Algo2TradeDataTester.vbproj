@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="OHLCPayload.vb" />
     <Compile Include="PairPayload.vb" />
+    <Compile Include="PairSymbolDetails.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmMain.resx">

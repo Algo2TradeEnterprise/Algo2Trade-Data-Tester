@@ -171,7 +171,8 @@ Namespace DAL
             Return ret
         End Function
         Public Sub WriteArrayToExcel(ByVal arr(,) As Object, ByVal rangeStr As String)
-            logger.Debug("Writing from memory(array) to file")
+            logger.Debug("Writting from memory(array) to file")
+            OnHeartbeat("Writting from memory(array) to file")
             _wSheetInstance.Range(rangeStr, Type.Missing).Value2 = arr
         End Sub
         Public Sub SetColumnFormat(ByVal columnNumber As Integer, ByVal numberFormat As String)

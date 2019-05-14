@@ -28,8 +28,8 @@ Partial Class frmMain
         Me.grpBoxInstrument1 = New System.Windows.Forms.GroupBox()
         Me.nmrcInstrument1Column = New System.Windows.Forms.NumericUpDown()
         Me.lblInstrument1Column = New System.Windows.Forms.Label()
-        Me.txtSymbol1 = New System.Windows.Forms.TextBox()
         Me.lblSymbol1 = New System.Windows.Forms.Label()
+        Me.txtSymbol1 = New System.Windows.Forms.TextBox()
         Me.txtToken1 = New System.Windows.Forms.TextBox()
         Me.lblToken1 = New System.Windows.Forms.Label()
         Me.grpBoxInstrument2 = New System.Windows.Forms.GroupBox()
@@ -49,16 +49,36 @@ Partial Class frmMain
         Me.btnBrowse = New System.Windows.Forms.Button()
         Me.OpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.txtFilePath = New System.Windows.Forms.TextBox()
+        Me.cmbSymbol = New System.Windows.Forms.ComboBox()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.nmrcInstrument1LotSize = New System.Windows.Forms.NumericUpDown()
+        Me.lblInstrument1LotSize = New System.Windows.Forms.Label()
+        Me.nmrcInstrument1NumberOfLots = New System.Windows.Forms.NumericUpDown()
+        Me.lblInstrument1NumberOfLots = New System.Windows.Forms.Label()
+        Me.lblInstrument1Brokerage = New System.Windows.Forms.Label()
+        Me.txtInstrument1Brokerage = New System.Windows.Forms.TextBox()
+        Me.lblInstrument2Brokerage = New System.Windows.Forms.Label()
+        Me.txtInstrument2Brokerage = New System.Windows.Forms.TextBox()
+        Me.nmrcInstrument2NumberOfLots = New System.Windows.Forms.NumericUpDown()
+        Me.lblInstrument2NumberOfLots = New System.Windows.Forms.Label()
+        Me.nmrcInstrument2LotSize = New System.Windows.Forms.NumericUpDown()
+        Me.lblInstrument2LotSize = New System.Windows.Forms.Label()
+        Me.dtpckrEODTime = New System.Windows.Forms.DateTimePicker()
+        Me.lblEODTime = New System.Windows.Forms.Label()
         Me.grpBoxInstrument1.SuspendLayout()
         CType(Me.nmrcInstrument1Column, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpBoxInstrument2.SuspendLayout()
         CType(Me.nmrcInstrument2Column, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpBoxDate.SuspendLayout()
+        CType(Me.nmrcInstrument1LotSize, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nmrcInstrument1NumberOfLots, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nmrcInstrument2NumberOfLots, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nmrcInstrument2LotSize, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lblProgress
         '
-        Me.lblProgress.Location = New System.Drawing.Point(26, 245)
+        Me.lblProgress.Location = New System.Drawing.Point(25, 372)
         Me.lblProgress.Name = "lblProgress"
         Me.lblProgress.Size = New System.Drawing.Size(695, 34)
         Me.lblProgress.TabIndex = 0
@@ -66,7 +86,7 @@ Partial Class frmMain
         '
         'btnStart
         '
-        Me.btnStart.Location = New System.Drawing.Point(536, 190)
+        Me.btnStart.Location = New System.Drawing.Point(536, 314)
         Me.btnStart.Name = "btnStart"
         Me.btnStart.Size = New System.Drawing.Size(84, 43)
         Me.btnStart.TabIndex = 1
@@ -75,15 +95,21 @@ Partial Class frmMain
         '
         'grpBoxInstrument1
         '
+        Me.grpBoxInstrument1.Controls.Add(Me.lblInstrument1Brokerage)
+        Me.grpBoxInstrument1.Controls.Add(Me.txtInstrument1Brokerage)
+        Me.grpBoxInstrument1.Controls.Add(Me.nmrcInstrument1NumberOfLots)
+        Me.grpBoxInstrument1.Controls.Add(Me.lblInstrument1NumberOfLots)
+        Me.grpBoxInstrument1.Controls.Add(Me.nmrcInstrument1LotSize)
+        Me.grpBoxInstrument1.Controls.Add(Me.lblInstrument1LotSize)
         Me.grpBoxInstrument1.Controls.Add(Me.nmrcInstrument1Column)
         Me.grpBoxInstrument1.Controls.Add(Me.lblInstrument1Column)
-        Me.grpBoxInstrument1.Controls.Add(Me.txtSymbol1)
         Me.grpBoxInstrument1.Controls.Add(Me.lblSymbol1)
+        Me.grpBoxInstrument1.Controls.Add(Me.txtSymbol1)
         Me.grpBoxInstrument1.Controls.Add(Me.txtToken1)
         Me.grpBoxInstrument1.Controls.Add(Me.lblToken1)
-        Me.grpBoxInstrument1.Location = New System.Drawing.Point(26, 17)
+        Me.grpBoxInstrument1.Location = New System.Drawing.Point(26, 52)
         Me.grpBoxInstrument1.Name = "grpBoxInstrument1"
-        Me.grpBoxInstrument1.Size = New System.Drawing.Size(340, 120)
+        Me.grpBoxInstrument1.Size = New System.Drawing.Size(340, 219)
         Me.grpBoxInstrument1.TabIndex = 2
         Me.grpBoxInstrument1.TabStop = False
         Me.grpBoxInstrument1.Text = "Instrument 1 Details"
@@ -104,13 +130,6 @@ Partial Class frmMain
         Me.lblInstrument1Column.TabIndex = 4
         Me.lblInstrument1Column.Text = "Starting Column"
         '
-        'txtSymbol1
-        '
-        Me.txtSymbol1.Location = New System.Drawing.Point(136, 55)
-        Me.txtSymbol1.Name = "txtSymbol1"
-        Me.txtSymbol1.Size = New System.Drawing.Size(193, 22)
-        Me.txtSymbol1.TabIndex = 3
-        '
         'lblSymbol1
         '
         Me.lblSymbol1.AutoSize = True
@@ -119,6 +138,13 @@ Partial Class frmMain
         Me.lblSymbol1.Size = New System.Drawing.Size(107, 17)
         Me.lblSymbol1.TabIndex = 2
         Me.lblSymbol1.Text = "Trading Symbol"
+        '
+        'txtSymbol1
+        '
+        Me.txtSymbol1.Location = New System.Drawing.Point(136, 55)
+        Me.txtSymbol1.Name = "txtSymbol1"
+        Me.txtSymbol1.Size = New System.Drawing.Size(193, 22)
+        Me.txtSymbol1.TabIndex = 3
         '
         'txtToken1
         '
@@ -138,15 +164,21 @@ Partial Class frmMain
         '
         'grpBoxInstrument2
         '
+        Me.grpBoxInstrument2.Controls.Add(Me.lblInstrument2Brokerage)
+        Me.grpBoxInstrument2.Controls.Add(Me.txtInstrument2Brokerage)
+        Me.grpBoxInstrument2.Controls.Add(Me.nmrcInstrument2NumberOfLots)
+        Me.grpBoxInstrument2.Controls.Add(Me.lblInstrument2NumberOfLots)
+        Me.grpBoxInstrument2.Controls.Add(Me.nmrcInstrument2LotSize)
+        Me.grpBoxInstrument2.Controls.Add(Me.lblInstrument2LotSize)
         Me.grpBoxInstrument2.Controls.Add(Me.nmrcInstrument2Column)
         Me.grpBoxInstrument2.Controls.Add(Me.lblInstrument2Column)
         Me.grpBoxInstrument2.Controls.Add(Me.txtSymbol2)
         Me.grpBoxInstrument2.Controls.Add(Me.lblSymbol2)
         Me.grpBoxInstrument2.Controls.Add(Me.txtToken2)
         Me.grpBoxInstrument2.Controls.Add(Me.lblToken2)
-        Me.grpBoxInstrument2.Location = New System.Drawing.Point(383, 17)
+        Me.grpBoxInstrument2.Location = New System.Drawing.Point(383, 52)
         Me.grpBoxInstrument2.Name = "grpBoxInstrument2"
-        Me.grpBoxInstrument2.Size = New System.Drawing.Size(340, 120)
+        Me.grpBoxInstrument2.Size = New System.Drawing.Size(340, 219)
         Me.grpBoxInstrument2.TabIndex = 3
         Me.grpBoxInstrument2.TabStop = False
         Me.grpBoxInstrument2.Text = "Instrument 2 Details"
@@ -205,7 +237,7 @@ Partial Class frmMain
         Me.grpBoxDate.Controls.Add(Me.dtpckrFromDate)
         Me.grpBoxDate.Controls.Add(Me.lblToDate)
         Me.grpBoxDate.Controls.Add(Me.lblFromDate)
-        Me.grpBoxDate.Location = New System.Drawing.Point(26, 143)
+        Me.grpBoxDate.Location = New System.Drawing.Point(26, 267)
         Me.grpBoxDate.Name = "grpBoxDate"
         Me.grpBoxDate.Size = New System.Drawing.Size(230, 94)
         Me.grpBoxDate.TabIndex = 4
@@ -248,7 +280,7 @@ Partial Class frmMain
         '
         'btnStop
         '
-        Me.btnStop.Location = New System.Drawing.Point(636, 190)
+        Me.btnStop.Location = New System.Drawing.Point(636, 314)
         Me.btnStop.Name = "btnStop"
         Me.btnStop.Size = New System.Drawing.Size(84, 43)
         Me.btnStop.TabIndex = 5
@@ -258,7 +290,7 @@ Partial Class frmMain
         'lblFilePath
         '
         Me.lblFilePath.AutoSize = True
-        Me.lblFilePath.Location = New System.Drawing.Point(273, 158)
+        Me.lblFilePath.Location = New System.Drawing.Point(273, 282)
         Me.lblFilePath.Name = "lblFilePath"
         Me.lblFilePath.Size = New System.Drawing.Size(126, 17)
         Me.lblFilePath.TabIndex = 6
@@ -266,7 +298,7 @@ Partial Class frmMain
         '
         'btnBrowse
         '
-        Me.btnBrowse.Location = New System.Drawing.Point(682, 157)
+        Me.btnBrowse.Location = New System.Drawing.Point(682, 280)
         Me.btnBrowse.Name = "btnBrowse"
         Me.btnBrowse.Size = New System.Drawing.Size(41, 23)
         Me.btnBrowse.TabIndex = 8
@@ -278,16 +310,152 @@ Partial Class frmMain
         '
         'txtFilePath
         '
-        Me.txtFilePath.Location = New System.Drawing.Point(408, 157)
+        Me.txtFilePath.Location = New System.Drawing.Point(408, 281)
         Me.txtFilePath.Name = "txtFilePath"
         Me.txtFilePath.Size = New System.Drawing.Size(268, 22)
         Me.txtFilePath.TabIndex = 7
+        '
+        'cmbSymbol
+        '
+        Me.cmbSymbol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbSymbol.FormattingEnabled = True
+        Me.cmbSymbol.Location = New System.Drawing.Point(115, 17)
+        Me.cmbSymbol.Name = "cmbSymbol"
+        Me.cmbSymbol.Size = New System.Drawing.Size(608, 24)
+        Me.cmbSymbol.TabIndex = 6
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(25, 19)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(84, 17)
+        Me.Label1.TabIndex = 9
+        Me.Label1.Text = "Symbol List:"
+        '
+        'nmrcInstrument1LotSize
+        '
+        Me.nmrcInstrument1LotSize.Location = New System.Drawing.Point(136, 120)
+        Me.nmrcInstrument1LotSize.Name = "nmrcInstrument1LotSize"
+        Me.nmrcInstrument1LotSize.Size = New System.Drawing.Size(120, 22)
+        Me.nmrcInstrument1LotSize.TabIndex = 7
+        '
+        'lblInstrument1LotSize
+        '
+        Me.lblInstrument1LotSize.AutoSize = True
+        Me.lblInstrument1LotSize.Location = New System.Drawing.Point(12, 120)
+        Me.lblInstrument1LotSize.Name = "lblInstrument1LotSize"
+        Me.lblInstrument1LotSize.Size = New System.Drawing.Size(59, 17)
+        Me.lblInstrument1LotSize.TabIndex = 6
+        Me.lblInstrument1LotSize.Text = "Lot Size"
+        '
+        'nmrcInstrument1NumberOfLots
+        '
+        Me.nmrcInstrument1NumberOfLots.Location = New System.Drawing.Point(136, 152)
+        Me.nmrcInstrument1NumberOfLots.Name = "nmrcInstrument1NumberOfLots"
+        Me.nmrcInstrument1NumberOfLots.Size = New System.Drawing.Size(120, 22)
+        Me.nmrcInstrument1NumberOfLots.TabIndex = 9
+        '
+        'lblInstrument1NumberOfLots
+        '
+        Me.lblInstrument1NumberOfLots.AutoSize = True
+        Me.lblInstrument1NumberOfLots.Location = New System.Drawing.Point(12, 152)
+        Me.lblInstrument1NumberOfLots.Name = "lblInstrument1NumberOfLots"
+        Me.lblInstrument1NumberOfLots.Size = New System.Drawing.Size(108, 17)
+        Me.lblInstrument1NumberOfLots.TabIndex = 8
+        Me.lblInstrument1NumberOfLots.Text = "Number Of Lots"
+        '
+        'lblInstrument1Brokerage
+        '
+        Me.lblInstrument1Brokerage.AutoSize = True
+        Me.lblInstrument1Brokerage.Location = New System.Drawing.Point(12, 184)
+        Me.lblInstrument1Brokerage.Name = "lblInstrument1Brokerage"
+        Me.lblInstrument1Brokerage.Size = New System.Drawing.Size(74, 17)
+        Me.lblInstrument1Brokerage.TabIndex = 10
+        Me.lblInstrument1Brokerage.Text = "Brokerage"
+        '
+        'txtInstrument1Brokerage
+        '
+        Me.txtInstrument1Brokerage.Location = New System.Drawing.Point(136, 183)
+        Me.txtInstrument1Brokerage.Name = "txtInstrument1Brokerage"
+        Me.txtInstrument1Brokerage.Size = New System.Drawing.Size(193, 22)
+        Me.txtInstrument1Brokerage.TabIndex = 11
+        '
+        'lblInstrument2Brokerage
+        '
+        Me.lblInstrument2Brokerage.AutoSize = True
+        Me.lblInstrument2Brokerage.Location = New System.Drawing.Point(12, 184)
+        Me.lblInstrument2Brokerage.Name = "lblInstrument2Brokerage"
+        Me.lblInstrument2Brokerage.Size = New System.Drawing.Size(74, 17)
+        Me.lblInstrument2Brokerage.TabIndex = 16
+        Me.lblInstrument2Brokerage.Text = "Brokerage"
+        '
+        'txtInstrument2Brokerage
+        '
+        Me.txtInstrument2Brokerage.Location = New System.Drawing.Point(136, 183)
+        Me.txtInstrument2Brokerage.Name = "txtInstrument2Brokerage"
+        Me.txtInstrument2Brokerage.Size = New System.Drawing.Size(193, 22)
+        Me.txtInstrument2Brokerage.TabIndex = 17
+        '
+        'nmrcInstrument2NumberOfLots
+        '
+        Me.nmrcInstrument2NumberOfLots.Location = New System.Drawing.Point(136, 152)
+        Me.nmrcInstrument2NumberOfLots.Name = "nmrcInstrument2NumberOfLots"
+        Me.nmrcInstrument2NumberOfLots.Size = New System.Drawing.Size(120, 22)
+        Me.nmrcInstrument2NumberOfLots.TabIndex = 15
+        '
+        'lblInstrument2NumberOfLots
+        '
+        Me.lblInstrument2NumberOfLots.AutoSize = True
+        Me.lblInstrument2NumberOfLots.Location = New System.Drawing.Point(12, 152)
+        Me.lblInstrument2NumberOfLots.Name = "lblInstrument2NumberOfLots"
+        Me.lblInstrument2NumberOfLots.Size = New System.Drawing.Size(108, 17)
+        Me.lblInstrument2NumberOfLots.TabIndex = 14
+        Me.lblInstrument2NumberOfLots.Text = "Number Of Lots"
+        '
+        'nmrcInstrument2LotSize
+        '
+        Me.nmrcInstrument2LotSize.Location = New System.Drawing.Point(136, 120)
+        Me.nmrcInstrument2LotSize.Name = "nmrcInstrument2LotSize"
+        Me.nmrcInstrument2LotSize.Size = New System.Drawing.Size(120, 22)
+        Me.nmrcInstrument2LotSize.TabIndex = 13
+        '
+        'lblInstrument2LotSize
+        '
+        Me.lblInstrument2LotSize.AutoSize = True
+        Me.lblInstrument2LotSize.Location = New System.Drawing.Point(12, 120)
+        Me.lblInstrument2LotSize.Name = "lblInstrument2LotSize"
+        Me.lblInstrument2LotSize.Size = New System.Drawing.Size(59, 17)
+        Me.lblInstrument2LotSize.TabIndex = 12
+        Me.lblInstrument2LotSize.Text = "Lot Size"
+        '
+        'dtpckrEODTime
+        '
+        Me.dtpckrEODTime.Format = System.Windows.Forms.DateTimePickerFormat.Time
+        Me.dtpckrEODTime.Location = New System.Drawing.Point(408, 316)
+        Me.dtpckrEODTime.Name = "dtpckrEODTime"
+        Me.dtpckrEODTime.Size = New System.Drawing.Size(119, 22)
+        Me.dtpckrEODTime.TabIndex = 11
+        Me.dtpckrEODTime.Value = New Date(2019, 5, 14, 23, 0, 0, 0)
+        '
+        'lblEODTime
+        '
+        Me.lblEODTime.AutoSize = True
+        Me.lblEODTime.Location = New System.Drawing.Point(273, 318)
+        Me.lblEODTime.Name = "lblEODTime"
+        Me.lblEODTime.Size = New System.Drawing.Size(99, 17)
+        Me.lblEODTime.TabIndex = 10
+        Me.lblEODTime.Text = "EOD Exit Time"
         '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(750, 294)
+        Me.ClientSize = New System.Drawing.Size(750, 418)
+        Me.Controls.Add(Me.dtpckrEODTime)
+        Me.Controls.Add(Me.lblEODTime)
+        Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.cmbSymbol)
         Me.Controls.Add(Me.btnBrowse)
         Me.Controls.Add(Me.txtFilePath)
         Me.Controls.Add(Me.lblFilePath)
@@ -310,6 +478,10 @@ Partial Class frmMain
         CType(Me.nmrcInstrument2Column, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpBoxDate.ResumeLayout(False)
         Me.grpBoxDate.PerformLayout()
+        CType(Me.nmrcInstrument1LotSize, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nmrcInstrument1NumberOfLots, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nmrcInstrument2NumberOfLots, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nmrcInstrument2LotSize, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -341,4 +513,20 @@ Partial Class frmMain
     Friend WithEvents lblInstrument2Column As Label
     Friend WithEvents nmrcInstrument1Column As NumericUpDown
     Friend WithEvents nmrcInstrument2Column As NumericUpDown
+    Friend WithEvents cmbSymbol As ComboBox
+    Friend WithEvents Label1 As Label
+    Friend WithEvents lblInstrument1Brokerage As Label
+    Friend WithEvents txtInstrument1Brokerage As TextBox
+    Friend WithEvents nmrcInstrument1NumberOfLots As NumericUpDown
+    Friend WithEvents lblInstrument1NumberOfLots As Label
+    Friend WithEvents nmrcInstrument1LotSize As NumericUpDown
+    Friend WithEvents lblInstrument1LotSize As Label
+    Friend WithEvents lblInstrument2Brokerage As Label
+    Friend WithEvents txtInstrument2Brokerage As TextBox
+    Friend WithEvents nmrcInstrument2NumberOfLots As NumericUpDown
+    Friend WithEvents lblInstrument2NumberOfLots As Label
+    Friend WithEvents nmrcInstrument2LotSize As NumericUpDown
+    Friend WithEvents lblInstrument2LotSize As Label
+    Friend WithEvents dtpckrEODTime As DateTimePicker
+    Friend WithEvents lblEODTime As Label
 End Class

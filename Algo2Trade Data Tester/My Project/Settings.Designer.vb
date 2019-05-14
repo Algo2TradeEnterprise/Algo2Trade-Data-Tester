@@ -56,107 +56,13 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property Token1() As String
-            Get
-                Return CType(Me("Token1"),String)
-            End Get
-            Set
-                Me("Token1") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property Symbol1() As String
-            Get
-                Return CType(Me("Symbol1"),String)
-            End Get
-            Set
-                Me("Symbol1") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property Token2() As String
-            Get
-                Return CType(Me("Token2"),String)
-            End Get
-            Set
-                Me("Token2") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property Symbol2() As String
-            Get
-                Return CType(Me("Symbol2"),String)
-            End Get
-            Set
-                Me("Symbol2") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Public Property FromDate() As Date
-            Get
-                Return CType(Me("FromDate"),Date)
-            End Get
-            Set
-                Me("FromDate") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
-        Public Property ToDate() As Date
-            Get
-                Return CType(Me("ToDate"),Date)
-            End Get
-            Set
-                Me("ToDate") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property FilePath() As String
-            Get
-                Return CType(Me("FilePath"),String)
-            End Get
-            Set
-                Me("FilePath") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-        Public Property Column1() As Integer
+        Public Property ComboBoxIndex() As Integer
             Get
-                Return CType(Me("Column1"),Integer)
+                Return CType(Me("ComboBoxIndex"),Integer)
             End Get
             Set
-                Me("Column1") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
-        Public Property Column2() As Integer
-            Get
-                Return CType(Me("Column2"),Integer)
-            End Get
-            Set
-                Me("Column2") = value
+                Me("ComboBoxIndex") = value
             End Set
         End Property
     End Class
