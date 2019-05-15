@@ -437,7 +437,7 @@ Public Class frmMain
                 excelWriter.SetData(3, 49, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1LotSize))
                 excelWriter.SetData(3, 50, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2LotSize))
                 excelWriter.SetData(4, 49, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
-                excelWriter.SetData(4, 50, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
+                excelWriter.SetData(4, 50, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2NumberOfLots))
                 excelWriter.SetData(5, 49, GetTextBoxText_ThreadSafe(txtInstrument1Brokerage))
                 excelWriter.SetData(5, 50, GetTextBoxText_ThreadSafe(txtInstrument2Brokerage))
                 excelWriter.SetData(8, 49, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Hour)
