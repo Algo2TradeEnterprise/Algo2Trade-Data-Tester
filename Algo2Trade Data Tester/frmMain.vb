@@ -308,7 +308,7 @@ Public Class frmMain
 
             OnHeartbeat("File Copy in progress")
             File.Copy(templateFile, outputFilename)
-            OnHeartbeat("Writting Excel")
+            OnHeartbeat("Writing Excel")
             Await WriteToExcel(outputFilename, historicalData).ConfigureAwait(False)
             OnHeartbeat("Process Complete")
 
