@@ -239,6 +239,7 @@ Public Class frmMain
         Else
             _symbolList.Add(combineInstrumentName, symbolDetails)
             cmbSymbol.Items.Add(combineInstrumentName)
+            cmbSymbol.SelectedItem = combineInstrumentName
         End If
         Utilities.Strings.SerializeFromCollection(Of Dictionary(Of String, PairSymbolDetails))(_fileName, _symbolList)
 
