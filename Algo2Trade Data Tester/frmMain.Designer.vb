@@ -65,6 +65,8 @@ Partial Class frmMain
         Me.Label1 = New System.Windows.Forms.Label()
         Me.dtpckrEODTime = New System.Windows.Forms.DateTimePicker()
         Me.lblEODTime = New System.Windows.Forms.Label()
+        Me.nmrcTimeFrame = New System.Windows.Forms.NumericUpDown()
+        Me.lblTimeFrame = New System.Windows.Forms.Label()
         Me.grpBoxInstrument1.SuspendLayout()
         CType(Me.nmrcInstrument1NumberOfLots, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.nmrcInstrument1LotSize, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -74,6 +76,7 @@ Partial Class frmMain
         CType(Me.nmrcInstrument2LotSize, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.nmrcInstrument2Column, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpBoxDate.SuspendLayout()
+        CType(Me.nmrcTimeFrame, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lblProgress
@@ -423,7 +426,7 @@ Partial Class frmMain
         Me.cmbSymbol.FormattingEnabled = True
         Me.cmbSymbol.Location = New System.Drawing.Point(115, 17)
         Me.cmbSymbol.Name = "cmbSymbol"
-        Me.cmbSymbol.Size = New System.Drawing.Size(608, 24)
+        Me.cmbSymbol.Size = New System.Drawing.Size(430, 24)
         Me.cmbSymbol.TabIndex = 6
         '
         'Label1
@@ -454,11 +457,30 @@ Partial Class frmMain
         Me.lblEODTime.TabIndex = 10
         Me.lblEODTime.Text = "EOD Exit Time"
         '
+        'nmrcTimeFrame
+        '
+        Me.nmrcTimeFrame.Location = New System.Drawing.Point(636, 18)
+        Me.nmrcTimeFrame.Maximum = New Decimal(New Integer() {60, 0, 0, 0})
+        Me.nmrcTimeFrame.Name = "nmrcTimeFrame"
+        Me.nmrcTimeFrame.Size = New System.Drawing.Size(76, 22)
+        Me.nmrcTimeFrame.TabIndex = 13
+        '
+        'lblTimeFrame
+        '
+        Me.lblTimeFrame.AutoSize = True
+        Me.lblTimeFrame.Location = New System.Drawing.Point(551, 20)
+        Me.lblTimeFrame.Name = "lblTimeFrame"
+        Me.lblTimeFrame.Size = New System.Drawing.Size(87, 17)
+        Me.lblTimeFrame.TabIndex = 12
+        Me.lblTimeFrame.Text = "Time Frame:"
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(750, 418)
+        Me.Controls.Add(Me.nmrcTimeFrame)
+        Me.Controls.Add(Me.lblTimeFrame)
         Me.Controls.Add(Me.dtpckrEODTime)
         Me.Controls.Add(Me.lblEODTime)
         Me.Controls.Add(Me.Label1)
@@ -489,6 +511,7 @@ Partial Class frmMain
         CType(Me.nmrcInstrument2Column, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpBoxDate.ResumeLayout(False)
         Me.grpBoxDate.PerformLayout()
+        CType(Me.nmrcTimeFrame, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -536,4 +559,6 @@ Partial Class frmMain
     Friend WithEvents lblInstrument2LotSize As Label
     Friend WithEvents dtpckrEODTime As DateTimePicker
     Friend WithEvents lblEODTime As Label
+    Friend WithEvents nmrcTimeFrame As NumericUpDown
+    Friend WithEvents lblTimeFrame As Label
 End Class

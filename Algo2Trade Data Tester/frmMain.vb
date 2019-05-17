@@ -230,7 +230,8 @@ Public Class frmMain
             .EODExitTime = dtpckrEODTime.Value,
             .FromDate = dtpckrFromDate.Value,
             .ToDate = dtpckrToDate.Value,
-            .TemplateFilePath = txtFilePath.Text
+            .TemplateFilePath = txtFilePath.Text,
+            .TimeFrame = nmrcTimeFrame.Value
         }
 
         Dim combineInstrumentName As String = String.Format("{0}_{1}", symbolDetails.Instrument1Name, symbolDetails.Instrument2Name)
@@ -265,6 +266,7 @@ Public Class frmMain
             Dim token2 As String = GetTextBoxText_ThreadSafe(txtToken2)
             Dim symbol2 As String = GetTextBoxText_ThreadSafe(txtSymbol2)
             Dim column2 As Integer = GetNumericUpDownValue_ThreadSafe(nmrcInstrument2Column)
+            Dim timeFrame As Integer = GetNumericUpDownValue_ThreadSafe(nmrcTimeFrame)
 
             If token1 IsNot Nothing AndAlso token1.Trim <> "" AndAlso
                 symbol1 IsNot Nothing AndAlso symbol1.Trim <> "" Then
@@ -294,6 +296,13 @@ Public Class frmMain
             End Using
             OnHeartbeat("Payload generation complete")
 
+            Dim XMinutePayloads As Dictionary(Of Date, PairPayload) = Nothing
+            If timeFrame > 1 Then
+                XMinutePayloads = ConvertPayloadsToXMinutes(historicalData, 5)
+            Else
+                XMinutePayloads = historicalData
+            End If
+
             Dim templateFile As String = GetTextBoxText_ThreadSafe(txtFilePath)
             Dim combinationOfSymbolName As String = String.Format("{0}{1}{2}", symbol1, If(symbol2 IsNot Nothing, "_", ""), If(symbol2 IsNot Nothing, symbol2, ""))
             Dim combinationOfDates As String = String.Format("{0}{1}{2}", fromDate.ToString("dd-MM-yy"), If(fromDate <> toDate, " to ", ""), If(fromDate <> toDate, toDate.ToString("dd-MM-yy"), ""))
@@ -310,7 +319,7 @@ Public Class frmMain
             OnHeartbeat("File Copy in progress")
             File.Copy(templateFile, outputFilename)
             OnHeartbeat("Writing Excel")
-            Await WriteToExcel(outputFilename, historicalData).ConfigureAwait(False)
+            Await WriteToExcel(outputFilename, XMinutePayloads).ConfigureAwait(False)
             OnHeartbeat("Process Complete")
 
             If MessageBox.Show("Do you want to open file?", "Algo2Trade Data Tester", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
@@ -473,5 +482,77 @@ Public Class frmMain
         dtpckrFromDate.Value = data.FromDate.Date
         dtpckrToDate.Value = data.ToDate.Date
         dtpckrEODTime.Value = data.EODExitTime
+        nmrcTimeFrame.Value = data.TimeFrame
     End Sub
+
+    Public Function ConvertPayloadsToXMinutes(ByVal inputPayload As Dictionary(Of Date, PairPayload), ByVal minute As Integer) As Dictionary(Of Date, PairPayload)
+        OnHeartbeat(String.Format("Converting to {0} minutes", minute))
+        Dim XMinutePayloads As Dictionary(Of Date, PairPayload) = Nothing
+        If inputPayload IsNot Nothing AndAlso inputPayload.Count > 0 Then
+            Dim newCandleStarted As Boolean = True
+            Dim runningOutputPayload As PairPayload = Nothing
+            Dim startTime As Date = Date.MaxValue
+            Dim endTime As Date = Date.MaxValue
+            For Each runningPayload In inputPayload.Keys
+                If runningPayload >= endTime Then
+                    newCandleStarted = True
+                    If runningOutputPayload IsNot Nothing Then
+                        If XMinutePayloads Is Nothing Then XMinutePayloads = New Dictionary(Of Date, PairPayload)
+                        XMinutePayloads.Add(runningPayload, runningOutputPayload)
+                    End If
+                End If
+                If newCandleStarted Then
+                    newCandleStarted = False
+                    startTime = runningPayload
+                    endTime = runningPayload.AddMinutes(minute)
+                    runningOutputPayload = New PairPayload
+                    runningOutputPayload.Instrument1Payload = New OHLCPayload
+                    runningOutputPayload.Instrument1Payload.SnapshotDateTime = startTime
+                    If inputPayload(runningPayload).Instrument1Payload IsNot Nothing Then
+                        runningOutputPayload.Instrument1Payload.OpenPrice = inputPayload(runningPayload).Instrument1Payload.OpenPrice
+                        runningOutputPayload.Instrument1Payload.LowPrice = inputPayload(runningPayload).Instrument1Payload.LowPrice
+                        runningOutputPayload.Instrument1Payload.HighPrice = inputPayload(runningPayload).Instrument1Payload.HighPrice
+                        runningOutputPayload.Instrument1Payload.ClosePrice = inputPayload(runningPayload).Instrument1Payload.ClosePrice
+                        runningOutputPayload.Instrument1Payload.Volume = inputPayload(runningPayload).Instrument1Payload.Volume
+                        runningOutputPayload.Instrument1Payload.TradingSymbol = inputPayload(runningPayload).Instrument1Payload.TradingSymbol
+                    End If
+
+
+                    runningOutputPayload.Instrument2Payload = New OHLCPayload
+                    runningOutputPayload.Instrument2Payload.SnapshotDateTime = startTime
+                    If inputPayload(runningPayload).Instrument2Payload IsNot Nothing Then
+                        runningOutputPayload.Instrument2Payload.OpenPrice = inputPayload(runningPayload).Instrument2Payload.OpenPrice
+                        runningOutputPayload.Instrument2Payload.LowPrice = inputPayload(runningPayload).Instrument2Payload.LowPrice
+                        runningOutputPayload.Instrument2Payload.HighPrice = inputPayload(runningPayload).Instrument2Payload.HighPrice
+                        runningOutputPayload.Instrument2Payload.ClosePrice = inputPayload(runningPayload).Instrument2Payload.ClosePrice
+                        runningOutputPayload.Instrument2Payload.Volume = inputPayload(runningPayload).Instrument2Payload.Volume
+                        runningOutputPayload.Instrument2Payload.TradingSymbol = inputPayload(runningPayload).Instrument2Payload.TradingSymbol
+                    End If
+                Else
+                    If inputPayload(runningPayload).Instrument1Payload IsNot Nothing Then
+                        runningOutputPayload.Instrument1Payload.HighPrice = Math.Max(runningOutputPayload.Instrument1Payload.HighPrice, inputPayload(runningPayload).Instrument1Payload.HighPrice)
+                        runningOutputPayload.Instrument1Payload.LowPrice = Math.Min(runningOutputPayload.Instrument1Payload.LowPrice, inputPayload(runningPayload).Instrument1Payload.LowPrice)
+                        runningOutputPayload.Instrument1Payload.ClosePrice = inputPayload(runningPayload).Instrument1Payload.ClosePrice
+                        runningOutputPayload.Instrument1Payload.Volume = runningOutputPayload.Instrument1Payload.Volume + inputPayload(runningPayload).Instrument1Payload.Volume
+                    End If
+
+                    If inputPayload(runningPayload).Instrument2Payload IsNot Nothing Then
+                        runningOutputPayload.Instrument2Payload.HighPrice = Math.Max(runningOutputPayload.Instrument2Payload.HighPrice, inputPayload(runningPayload).Instrument2Payload.HighPrice)
+                        runningOutputPayload.Instrument2Payload.LowPrice = Math.Min(runningOutputPayload.Instrument2Payload.LowPrice, inputPayload(runningPayload).Instrument2Payload.LowPrice)
+                        runningOutputPayload.Instrument2Payload.ClosePrice = inputPayload(runningPayload).Instrument2Payload.ClosePrice
+                        runningOutputPayload.Instrument2Payload.Volume = runningOutputPayload.Instrument2Payload.Volume + inputPayload(runningPayload).Instrument2Payload.Volume
+                    End If
+                End If
+            Next
+            If runningOutputPayload IsNot Nothing Then
+                If XMinutePayloads Is Nothing Then
+                    XMinutePayloads = New Dictionary(Of Date, PairPayload)
+                    XMinutePayloads.Add(runningOutputPayload.Instrument1Payload.SnapshotDateTime, runningOutputPayload)
+                Else
+                    XMinutePayloads(runningOutputPayload.Instrument1Payload.SnapshotDateTime) = runningOutputPayload
+                End If
+            End If
+        End If
+        Return XMinutePayloads
+    End Function
 End Class

@@ -17,5 +17,6 @@ Public Class PairSymbolDetails
     Public Property EODExitTime As Date
     Public Property FromDate As Date
     Public Property ToDate As Date
+    Public Property TimeFrame As Integer
     Public Property TemplateFilePath As String
 End Class
