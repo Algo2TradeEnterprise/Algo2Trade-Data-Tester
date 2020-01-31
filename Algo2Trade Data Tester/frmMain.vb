@@ -450,14 +450,14 @@ Public Class frmMain
                 mainRawData = Nothing
 
                 'After Processing
-                excelWriter.SetData(3, 49, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1LotSize))
-                excelWriter.SetData(3, 50, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2LotSize))
-                excelWriter.SetData(4, 49, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
-                excelWriter.SetData(4, 50, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2NumberOfLots))
-                excelWriter.SetData(5, 49, GetTextBoxText_ThreadSafe(txtInstrument1Brokerage))
-                excelWriter.SetData(5, 50, GetTextBoxText_ThreadSafe(txtInstrument2Brokerage))
-                excelWriter.SetData(8, 49, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Hour)
-                excelWriter.SetData(8, 50, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Minute)
+                excelWriter.SetData(3, 34, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1LotSize))
+                excelWriter.SetData(3, 35, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2LotSize))
+                excelWriter.SetData(4, 34, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
+                excelWriter.SetData(4, 35, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2NumberOfLots))
+                excelWriter.SetData(5, 34, GetTextBoxText_ThreadSafe(txtInstrument1Brokerage))
+                excelWriter.SetData(5, 35, GetTextBoxText_ThreadSafe(txtInstrument2Brokerage))
+                excelWriter.SetData(8, 34, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Hour)
+                excelWriter.SetData(8, 35, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Minute)
             End If
             excelWriter.SaveExcel()
         End Using
