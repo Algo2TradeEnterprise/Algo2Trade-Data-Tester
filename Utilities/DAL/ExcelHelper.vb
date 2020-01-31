@@ -684,6 +684,11 @@ Namespace DAL
             rFirstAddress = Nothing
             Return ret
         End Function
+
+        Public Sub FilterData(ByVal columnNumber As String)
+            _wSheetInstance.AutoFilterMode = False
+            _wSheetInstance.Columns.AutoFilter(columnNumber, "=TRUE")
+        End Sub
 #End Region
 
 #Region "IDisposable Support"

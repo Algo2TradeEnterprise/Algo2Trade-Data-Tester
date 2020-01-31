@@ -298,7 +298,7 @@ Public Class frmMain
 
             Dim XMinutePayloads As Dictionary(Of Date, PairPayload) = Nothing
             If timeFrame > 1 Then
-                XMinutePayloads = ConvertPayloadsToXMinutes(historicalData, 5)
+                XMinutePayloads = ConvertPayloadsToXMinutes(historicalData, timeFrame)
             Else
                 XMinutePayloads = historicalData
             End If
