@@ -67,6 +67,11 @@ Partial Class frmMain
         Me.lblEODTime = New System.Windows.Forms.Label()
         Me.nmrcTimeFrame = New System.Windows.Forms.NumericUpDown()
         Me.lblTimeFrame = New System.Windows.Forms.Label()
+        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.rdbLive = New System.Windows.Forms.RadioButton()
+        Me.rdbDatabase = New System.Windows.Forms.RadioButton()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.cmbTable = New System.Windows.Forms.ComboBox()
         Me.grpBoxInstrument1.SuspendLayout()
         CType(Me.nmrcInstrument1NumberOfLots, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.nmrcInstrument1LotSize, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -77,11 +82,12 @@ Partial Class frmMain
         CType(Me.nmrcInstrument2Column, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpBoxDate.SuspendLayout()
         CType(Me.nmrcTimeFrame, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
         'lblProgress
         '
-        Me.lblProgress.Location = New System.Drawing.Point(25, 372)
+        Me.lblProgress.Location = New System.Drawing.Point(25, 425)
         Me.lblProgress.Name = "lblProgress"
         Me.lblProgress.Size = New System.Drawing.Size(695, 34)
         Me.lblProgress.TabIndex = 0
@@ -89,7 +95,7 @@ Partial Class frmMain
         '
         'btnStart
         '
-        Me.btnStart.Location = New System.Drawing.Point(536, 314)
+        Me.btnStart.Location = New System.Drawing.Point(536, 367)
         Me.btnStart.Name = "btnStart"
         Me.btnStart.Size = New System.Drawing.Size(84, 43)
         Me.btnStart.TabIndex = 1
@@ -110,7 +116,7 @@ Partial Class frmMain
         Me.grpBoxInstrument1.Controls.Add(Me.txtSymbol1)
         Me.grpBoxInstrument1.Controls.Add(Me.txtToken1)
         Me.grpBoxInstrument1.Controls.Add(Me.lblToken1)
-        Me.grpBoxInstrument1.Location = New System.Drawing.Point(26, 52)
+        Me.grpBoxInstrument1.Location = New System.Drawing.Point(26, 105)
         Me.grpBoxInstrument1.Name = "grpBoxInstrument1"
         Me.grpBoxInstrument1.Size = New System.Drawing.Size(340, 219)
         Me.grpBoxInstrument1.TabIndex = 2
@@ -230,7 +236,7 @@ Partial Class frmMain
         Me.grpBoxInstrument2.Controls.Add(Me.lblSymbol2)
         Me.grpBoxInstrument2.Controls.Add(Me.txtToken2)
         Me.grpBoxInstrument2.Controls.Add(Me.lblToken2)
-        Me.grpBoxInstrument2.Location = New System.Drawing.Point(383, 52)
+        Me.grpBoxInstrument2.Location = New System.Drawing.Point(383, 105)
         Me.grpBoxInstrument2.Name = "grpBoxInstrument2"
         Me.grpBoxInstrument2.Size = New System.Drawing.Size(340, 219)
         Me.grpBoxInstrument2.TabIndex = 3
@@ -342,7 +348,7 @@ Partial Class frmMain
         Me.grpBoxDate.Controls.Add(Me.dtpckrFromDate)
         Me.grpBoxDate.Controls.Add(Me.lblToDate)
         Me.grpBoxDate.Controls.Add(Me.lblFromDate)
-        Me.grpBoxDate.Location = New System.Drawing.Point(26, 267)
+        Me.grpBoxDate.Location = New System.Drawing.Point(26, 320)
         Me.grpBoxDate.Name = "grpBoxDate"
         Me.grpBoxDate.Size = New System.Drawing.Size(230, 94)
         Me.grpBoxDate.TabIndex = 4
@@ -385,7 +391,7 @@ Partial Class frmMain
         '
         'btnStop
         '
-        Me.btnStop.Location = New System.Drawing.Point(636, 314)
+        Me.btnStop.Location = New System.Drawing.Point(636, 367)
         Me.btnStop.Name = "btnStop"
         Me.btnStop.Size = New System.Drawing.Size(84, 43)
         Me.btnStop.TabIndex = 5
@@ -395,7 +401,7 @@ Partial Class frmMain
         'lblFilePath
         '
         Me.lblFilePath.AutoSize = True
-        Me.lblFilePath.Location = New System.Drawing.Point(273, 282)
+        Me.lblFilePath.Location = New System.Drawing.Point(273, 335)
         Me.lblFilePath.Name = "lblFilePath"
         Me.lblFilePath.Size = New System.Drawing.Size(126, 17)
         Me.lblFilePath.TabIndex = 6
@@ -403,7 +409,7 @@ Partial Class frmMain
         '
         'btnBrowse
         '
-        Me.btnBrowse.Location = New System.Drawing.Point(682, 280)
+        Me.btnBrowse.Location = New System.Drawing.Point(682, 333)
         Me.btnBrowse.Name = "btnBrowse"
         Me.btnBrowse.Size = New System.Drawing.Size(41, 23)
         Me.btnBrowse.TabIndex = 8
@@ -415,7 +421,7 @@ Partial Class frmMain
         '
         'txtFilePath
         '
-        Me.txtFilePath.Location = New System.Drawing.Point(408, 281)
+        Me.txtFilePath.Location = New System.Drawing.Point(408, 334)
         Me.txtFilePath.Name = "txtFilePath"
         Me.txtFilePath.Size = New System.Drawing.Size(268, 22)
         Me.txtFilePath.TabIndex = 7
@@ -441,7 +447,7 @@ Partial Class frmMain
         'dtpckrEODTime
         '
         Me.dtpckrEODTime.Format = System.Windows.Forms.DateTimePickerFormat.Time
-        Me.dtpckrEODTime.Location = New System.Drawing.Point(408, 316)
+        Me.dtpckrEODTime.Location = New System.Drawing.Point(408, 369)
         Me.dtpckrEODTime.Name = "dtpckrEODTime"
         Me.dtpckrEODTime.ShowUpDown = True
         Me.dtpckrEODTime.Size = New System.Drawing.Size(119, 22)
@@ -451,7 +457,7 @@ Partial Class frmMain
         'lblEODTime
         '
         Me.lblEODTime.AutoSize = True
-        Me.lblEODTime.Location = New System.Drawing.Point(273, 318)
+        Me.lblEODTime.Location = New System.Drawing.Point(273, 371)
         Me.lblEODTime.Name = "lblEODTime"
         Me.lblEODTime.Size = New System.Drawing.Size(99, 17)
         Me.lblEODTime.TabIndex = 10
@@ -474,11 +480,65 @@ Partial Class frmMain
         Me.lblTimeFrame.TabIndex = 12
         Me.lblTimeFrame.Text = "Time Frame:"
         '
+        'GroupBox1
+        '
+        Me.GroupBox1.Controls.Add(Me.cmbTable)
+        Me.GroupBox1.Controls.Add(Me.Label2)
+        Me.GroupBox1.Controls.Add(Me.rdbDatabase)
+        Me.GroupBox1.Controls.Add(Me.rdbLive)
+        Me.GroupBox1.Location = New System.Drawing.Point(28, 47)
+        Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Size = New System.Drawing.Size(684, 52)
+        Me.GroupBox1.TabIndex = 14
+        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.Text = "Data Source"
+        '
+        'rdbLive
+        '
+        Me.rdbLive.AutoSize = True
+        Me.rdbLive.Checked = True
+        Me.rdbLive.Location = New System.Drawing.Point(13, 22)
+        Me.rdbLive.Name = "rdbLive"
+        Me.rdbLive.Size = New System.Drawing.Size(55, 21)
+        Me.rdbLive.TabIndex = 0
+        Me.rdbLive.TabStop = True
+        Me.rdbLive.Text = "Live"
+        Me.rdbLive.UseVisualStyleBackColor = True
+        '
+        'rdbDatabase
+        '
+        Me.rdbDatabase.AutoSize = True
+        Me.rdbDatabase.Location = New System.Drawing.Point(100, 21)
+        Me.rdbDatabase.Name = "rdbDatabase"
+        Me.rdbDatabase.Size = New System.Drawing.Size(90, 21)
+        Me.rdbDatabase.TabIndex = 1
+        Me.rdbDatabase.Text = "Database"
+        Me.rdbDatabase.UseVisualStyleBackColor = True
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(248, 22)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(48, 17)
+        Me.Label2.TabIndex = 2
+        Me.Label2.Text = "Table:"
+        '
+        'cmbTable
+        '
+        Me.cmbTable.FormattingEnabled = True
+        Me.cmbTable.Items.AddRange(New Object() {"Intraday Cash", "Intraday Commodity", "Intraday Currency", "Intraday Futures", "EOD Cash", "EOD Commodity", "EOD Currency", "EOD Futures", "Intraday Futures Option", "EOD Futures Option"})
+        Me.cmbTable.Location = New System.Drawing.Point(302, 19)
+        Me.cmbTable.Name = "cmbTable"
+        Me.cmbTable.Size = New System.Drawing.Size(290, 24)
+        Me.cmbTable.TabIndex = 3
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(750, 418)
+        Me.ClientSize = New System.Drawing.Size(750, 468)
+        Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.nmrcTimeFrame)
         Me.Controls.Add(Me.lblTimeFrame)
         Me.Controls.Add(Me.dtpckrEODTime)
@@ -512,6 +572,8 @@ Partial Class frmMain
         Me.grpBoxDate.ResumeLayout(False)
         Me.grpBoxDate.PerformLayout()
         CType(Me.nmrcTimeFrame, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox1.ResumeLayout(False)
+        Me.GroupBox1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -561,4 +623,9 @@ Partial Class frmMain
     Friend WithEvents lblEODTime As Label
     Friend WithEvents nmrcTimeFrame As NumericUpDown
     Friend WithEvents lblTimeFrame As Label
+    Friend WithEvents GroupBox1 As GroupBox
+    Friend WithEvents rdbDatabase As RadioButton
+    Friend WithEvents rdbLive As RadioButton
+    Friend WithEvents Label2 As Label
+    Friend WithEvents cmbTable As ComboBox
 End Class

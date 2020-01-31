@@ -15,7 +15,7 @@ Option Explicit On
 Namespace My
     
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0"),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0"),  _
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
     Partial Friend NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
@@ -63,6 +63,84 @@ Namespace My
             End Get
             Set
                 Me("ComboBoxIndex") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("server=DESKTOP-RIO;database=local_stock;port=3306;user id=rio;password=speech123;"& _ 
+            "defaultcommandtimeout=180;pooling=True;minpoolsize=2;maxpoolsize=5;useaffectedro"& _ 
+            "ws=False;allowuservariables=True")>  _
+        Public Property dbConnectionLocalNetwork() As String
+            Get
+                Return CType(Me("dbConnectionLocalNetwork"),String)
+            End Get
+            Set
+                Me("dbConnectionLocalNetwork") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("server=59.90.230.163;database=local_stock;port=3306;user id=rio;password=speech12"& _ 
+            "3;defaultcommandtimeout=180;pooling=True;minpoolsize=2;maxpoolsize=5;useaffected"& _ 
+            "rows=False;allowuservariables=True")>  _
+        Public Property dbConnectionRemote() As String
+            Get
+                Return CType(Me("dbConnectionRemote"),String)
+            End Get
+            Set
+                Me("dbConnectionRemote") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("server=localhost;database=local_stock;port=3306;user id=rio;password=speech123;de"& _ 
+            "faultcommandtimeout=180;pooling=True;minpoolsize=2;maxpoolsize=5;useaffectedrows"& _ 
+            "=False;allowuservariables=True")>  _
+        Public Property dbConnectionLocal() As String
+            Get
+                Return CType(Me("dbConnectionLocal"),String)
+            End Get
+            Set
+                Me("dbConnectionLocal") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+        Public Property TableIndex() As Integer
+            Get
+                Return CType(Me("TableIndex"),Integer)
+            End Get
+            Set
+                Me("TableIndex") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public Property Live() As Boolean
+            Get
+                Return CType(Me("Live"),Boolean)
+            End Get
+            Set
+                Me("Live") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property Database() As Boolean
+            Get
+                Return CType(Me("Database"),Boolean)
+            End Get
+            Set
+                Me("Database") = value
             End Set
         End Property
     End Class

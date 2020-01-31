@@ -26,13 +26,16 @@ Public Class HistoricalDataFetcher
     End Sub
 #End Region
 
-    Private cts As CancellationTokenSource
+    Private ReadOnly cts As CancellationTokenSource
     Private ReadOnly ZerodhaHistoricalURL = "https://kitecharts-aws.zerodha.com/api/chart/{0}/minute?api_key=kitefront&access_token=K&from={1}&to={2}"
     Private HistoricalDataCollection As Dictionary(Of Date, PairPayload) = Nothing
-
+    Private ReadOnly _database As Boolean
+    Private ReadOnly _table As Common.DataBaseTable
 
     Public Sub New(ByVal canceller As CancellationTokenSource)
         cts = canceller
+        _database = My.Settings.Database
+        _table = My.Settings.TableIndex + 2
     End Sub
 
     Private Async Function GetHistoricalCandleStickAsync(ByVal instrumentToken As String, ByVal fromDate As Date, ByVal toDate As Date) As Task(Of Dictionary(Of String, Object))
@@ -49,6 +52,7 @@ Public Class HistoricalDataFetcher
             Throw ex
         End Try
     End Function
+
     Public Async Function ProcessHistoricalData(ByVal instrumentList As Dictionary(Of Integer, String), ByVal fromDate As Date, ByVal toDate As Date) As Task(Of Dictionary(Of Date, PairPayload))
         Try
             If instrumentList IsNot Nothing AndAlso instrumentList.Count > 0 Then
@@ -56,9 +60,19 @@ Public Class HistoricalDataFetcher
                 For Each runningInstrument In instrumentList.Keys
                     cts.Token.ThrowIfCancellationRequested()
                     counter += 1
-                    Dim historicalCandlesJSONDict As Dictionary(Of String, Object) = Await GetHistoricalCandleStickAsync(runningInstrument, fromDate, toDate).ConfigureAwait(False)
-                    If historicalCandlesJSONDict IsNot Nothing AndAlso historicalCandlesJSONDict.Count > 0 Then
-                        Await GetChartFromHistoricalAsync(historicalCandlesJSONDict, counter, instrumentList(runningInstrument)).ConfigureAwait(False)
+                    If _database Then
+                        Dim cmn As Common = New Common(cts)
+                        AddHandler cmn.Heartbeat, AddressOf OnHeartbeat
+
+                        Dim candleData As Dictionary(Of Date, Payload) = cmn.GetRawPayloadForSpecificTradingSymbol(_table, instrumentList(runningInstrument), fromDate, toDate)
+                        If candleData IsNot Nothing AndAlso candleData.Count > 0 Then
+                            GetChartFromDatabase(candleData, counter, instrumentList(runningInstrument))
+                        End If
+                    Else
+                        Dim historicalCandlesJSONDict As Dictionary(Of String, Object) = Await GetHistoricalCandleStickAsync(runningInstrument, fromDate, toDate).ConfigureAwait(False)
+                        If historicalCandlesJSONDict IsNot Nothing AndAlso historicalCandlesJSONDict.Count > 0 Then
+                            GetChartFromHistorical(historicalCandlesJSONDict, counter, instrumentList(runningInstrument))
+                        End If
                     End If
                 Next
             End If
@@ -67,59 +81,102 @@ Public Class HistoricalDataFetcher
         End Try
         Return HistoricalDataCollection
     End Function
-    Private Async Function GetChartFromHistoricalAsync(ByVal historicalCandlesJSONDict As Dictionary(Of String, Object),
-                                                       ByVal instrumentNumber As Integer,
-                                                       ByVal tradingSymbol As String) As Task
-        Await Task.Delay(0, cts.Token).ConfigureAwait(False)
-        If instrumentNumber > 2 Then Exit Function
-        If instrumentNumber < 1 Then Exit Function
-        Try
-            If historicalCandlesJSONDict.ContainsKey("data") Then
-                Dim historicalCandlesDict As Dictionary(Of String, Object) = historicalCandlesJSONDict("data")
-                If historicalCandlesDict.ContainsKey("candles") AndAlso historicalCandlesDict("candles").count > 0 Then
-                    Dim historicalCandles As ArrayList = historicalCandlesDict("candles")
-                    If HistoricalDataCollection Is Nothing Then HistoricalDataCollection = New Dictionary(Of Date, PairPayload)
-                    OnHeartbeat(String.Format("Generating Payload for {0}", tradingSymbol))
-                    For Each historicalCandle In historicalCandles
-                        cts.Token.ThrowIfCancellationRequested()
-                        Dim runningSnapshotTime As Date = Utilities.Time.GetDateTimeTillMinutes(historicalCandle(0))
-                        Dim runningPairPayload As PairPayload = Nothing
-                        If HistoricalDataCollection IsNot Nothing AndAlso HistoricalDataCollection.Count > 0 AndAlso
+
+    Private Sub GetChartFromHistorical(ByVal historicalCandlesJSONDict As Dictionary(Of String, Object),
+                                            ByVal instrumentNumber As Integer,
+                                            ByVal tradingSymbol As String)
+        If instrumentNumber > 2 Then Exit Sub
+        If instrumentNumber < 1 Then Exit Sub
+
+        If historicalCandlesJSONDict.ContainsKey("data") Then
+            Dim historicalCandlesDict As Dictionary(Of String, Object) = historicalCandlesJSONDict("data")
+            If historicalCandlesDict.ContainsKey("candles") AndAlso historicalCandlesDict("candles").count > 0 Then
+                Dim historicalCandles As ArrayList = historicalCandlesDict("candles")
+                If HistoricalDataCollection Is Nothing Then HistoricalDataCollection = New Dictionary(Of Date, PairPayload)
+                OnHeartbeat(String.Format("Generating Payload for {0}", tradingSymbol))
+                For Each historicalCandle In historicalCandles
+                    cts.Token.ThrowIfCancellationRequested()
+                    Dim runningSnapshotTime As Date = Utilities.Time.GetDateTimeTillMinutes(historicalCandle(0))
+                    Dim runningPairPayload As PairPayload = Nothing
+                    If HistoricalDataCollection IsNot Nothing AndAlso HistoricalDataCollection.Count > 0 AndAlso
                             HistoricalDataCollection.ContainsKey(runningSnapshotTime) Then
-                            runningPairPayload = HistoricalDataCollection(runningSnapshotTime)
-                        End If
+                        runningPairPayload = HistoricalDataCollection(runningSnapshotTime)
+                    End If
 
-                        Dim runningPayload As OHLCPayload = New OHLCPayload
-                        With runningPayload
-                            .SnapshotDateTime = Utilities.Time.GetDateTimeTillMinutes(historicalCandle(0))
-                            .TradingSymbol = tradingSymbol
-                            .OpenPrice = historicalCandle(1)
-                            .HighPrice = historicalCandle(2)
-                            .LowPrice = historicalCandle(3)
-                            .ClosePrice = historicalCandle(4)
-                            .Volume = historicalCandle(5)
-                        End With
+                    Dim runningPayload As OHLCPayload = New OHLCPayload
+                    With runningPayload
+                        .SnapshotDateTime = Utilities.Time.GetDateTimeTillMinutes(historicalCandle(0))
+                        .TradingSymbol = tradingSymbol
+                        .OpenPrice = historicalCandle(1)
+                        .HighPrice = historicalCandle(2)
+                        .LowPrice = historicalCandle(3)
+                        .ClosePrice = historicalCandle(4)
+                        .Volume = historicalCandle(5)
+                    End With
 
-                        If runningPairPayload Is Nothing Then
-                            runningPairPayload = New PairPayload
-                            HistoricalDataCollection.Add(runningSnapshotTime, runningPairPayload)
-                        End If
+                    If runningPairPayload Is Nothing Then
+                        runningPairPayload = New PairPayload
+                        HistoricalDataCollection.Add(runningSnapshotTime, runningPairPayload)
+                    End If
 
-                        If instrumentNumber = 1 Then
-                            runningPairPayload.Instrument1Payload = runningPayload
-                        ElseIf instrumentNumber = 2 Then
-                            runningPairPayload.Instrument2Payload = runningPayload
-                        Else
-                            Throw New NotImplementedException
-                        End If
+                    If instrumentNumber = 1 Then
+                        runningPairPayload.Instrument1Payload = runningPayload
+                    ElseIf instrumentNumber = 2 Then
+                        runningPairPayload.Instrument2Payload = runningPayload
+                    Else
+                        Throw New NotImplementedException
+                    End If
 
-                    Next
-                End If
+                Next
             End If
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
+        End If
+    End Sub
+
+    Private Sub GetChartFromDatabase(ByVal candlesData As Dictionary(Of Date, Payload),
+                                            ByVal instrumentNumber As Integer,
+                                            ByVal tradingSymbol As String)
+        If instrumentNumber > 2 Then Exit Sub
+        If instrumentNumber < 1 Then Exit Sub
+
+        If candlesData IsNot Nothing AndAlso candlesData.Count > 0 Then
+            If HistoricalDataCollection Is Nothing Then HistoricalDataCollection = New Dictionary(Of Date, PairPayload)
+            OnHeartbeat(String.Format("Generating Payload for {0}", tradingSymbol))
+            For Each historicalCandle In candlesData
+                cts.Token.ThrowIfCancellationRequested()
+                Dim runningSnapshotTime As Date = historicalCandle.Value.PayloadDate
+                Dim runningPairPayload As PairPayload = Nothing
+                If HistoricalDataCollection IsNot Nothing AndAlso HistoricalDataCollection.Count > 0 AndAlso
+                        HistoricalDataCollection.ContainsKey(runningSnapshotTime) Then
+                    runningPairPayload = HistoricalDataCollection(runningSnapshotTime)
+                End If
+
+                Dim runningPayload As OHLCPayload = New OHLCPayload
+                With runningPayload
+                    .SnapshotDateTime = historicalCandle.Value.PayloadDate
+                    .TradingSymbol = tradingSymbol
+                    .OpenPrice = historicalCandle.Value.Open
+                    .HighPrice = historicalCandle.Value.High
+                    .LowPrice = historicalCandle.Value.Low
+                    .ClosePrice = historicalCandle.Value.Close
+                    .Volume = historicalCandle.Value.Volume
+                End With
+
+                If runningPairPayload Is Nothing Then
+                    runningPairPayload = New PairPayload
+                    HistoricalDataCollection.Add(runningSnapshotTime, runningPairPayload)
+                End If
+
+                If instrumentNumber = 1 Then
+                    runningPairPayload.Instrument1Payload = runningPayload
+                ElseIf instrumentNumber = 2 Then
+                    runningPairPayload.Instrument2Payload = runningPayload
+                Else
+                    Throw New NotImplementedException
+                End If
+
+            Next
+        End If
+    End Sub
 
 #Region "IDisposable Support"
     Private disposedValue As Boolean ' To detect redundant calls

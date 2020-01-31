@@ -204,6 +204,9 @@ Public Class frmMain
             Next
             cmbSymbol.SelectedIndex = My.Settings.ComboBoxIndex
         End If
+        rdbLive.Checked = My.Settings.Live
+        rdbDatabase.Checked = My.Settings.Database
+        cmbTable.SelectedIndex = My.Settings.TableIndex
     End Sub
 
     Private Async Sub btnStart_Click(sender As Object, e As EventArgs) Handles btnStart.Click
@@ -213,6 +216,10 @@ Public Class frmMain
         SetObjectEnableDisable_ThreadSafe(btnStop, True)
 
         My.Settings.ComboBoxIndex = GetComboBoxIndex_ThreadSafe(cmbSymbol)
+        My.Settings.Live = rdbLive.Checked
+        My.Settings.Database = rdbDatabase.Checked
+        My.Settings.TableIndex =GetComboBoxIndex_ThreadSafe(cmbTable)
+        My.Settings.Save()
 
         Dim symbolDetails As PairSymbolDetails = New PairSymbolDetails With {
             .Instrument1Name = txtSymbol1.Text.Trim,
@@ -555,4 +562,12 @@ Public Class frmMain
         End If
         Return XMinutePayloads
     End Function
+
+    Private Sub rdbLive_CheckedChanged(sender As Object, e As EventArgs) Handles rdbLive.CheckedChanged
+        cmbTable.Enabled = False
+    End Sub
+
+    Private Sub rdbDatabase_CheckedChanged(sender As Object, e As EventArgs) Handles rdbDatabase.CheckedChanged
+        cmbTable.Enabled = True
+    End Sub
 End Class
