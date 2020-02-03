@@ -67,11 +67,15 @@ Public Class HistoricalDataFetcher
                         Dim candleData As Dictionary(Of Date, Payload) = cmn.GetRawPayloadForSpecificTradingSymbol(_table, instrumentList(runningInstrument), fromDate, toDate)
                         If candleData IsNot Nothing AndAlso candleData.Count > 0 Then
                             GetChartFromDatabase(candleData, counter, instrumentList(runningInstrument))
+                        Else
+                            Throw New ApplicationException(String.Format("No data found from database for {0}", instrumentList(runningInstrument)))
                         End If
                     Else
                         Dim historicalCandlesJSONDict As Dictionary(Of String, Object) = Await GetHistoricalCandleStickAsync(runningInstrument, fromDate, toDate).ConfigureAwait(False)
                         If historicalCandlesJSONDict IsNot Nothing AndAlso historicalCandlesJSONDict.Count > 0 Then
                             GetChartFromHistorical(historicalCandlesJSONDict, counter, instrumentList(runningInstrument))
+                        Else
+                            Throw New ApplicationException(String.Format("No data found from live for {0}", instrumentList(runningInstrument)))
                         End If
                     End If
                 Next

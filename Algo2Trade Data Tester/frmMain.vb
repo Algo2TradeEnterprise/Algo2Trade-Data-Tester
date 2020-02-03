@@ -222,13 +222,13 @@ Public Class frmMain
         My.Settings.Save()
 
         Dim symbolDetails As PairSymbolDetails = New PairSymbolDetails With {
-            .Instrument1Name = txtSymbol1.Text.Trim,
+            .Instrument1Name = txtSymbol1.Text.Trim.ToUpper,
             .Instrument1Token = txtToken1.Text.Trim,
             .Instrument1StartingColumn = nmrcInstrument1Column.Value,
             .Instrument1LotSize = nmrcInstrument1LotSize.Value,
             .Instrument1NumberOfLots = nmrcInstrument1NumberOfLots.Value,
             .Instrument1Brokerage = txtInstrument1Brokerage.Text,
-            .Instrument2Name = txtSymbol2.Text.Trim,
+            .Instrument2Name = txtSymbol2.Text.Trim.ToUpper,
             .Instrument2Token = txtToken2.Text.Trim,
             .Instrument2StartingColumn = nmrcInstrument2Column.Value,
             .Instrument2LotSize = nmrcInstrument2LotSize.Value,
@@ -268,10 +268,10 @@ Public Class frmMain
             End If
 
             Dim token1 As String = GetTextBoxText_ThreadSafe(txtToken1)
-            Dim symbol1 As String = GetTextBoxText_ThreadSafe(txtSymbol1)
+            Dim symbol1 As String = GetTextBoxText_ThreadSafe(txtSymbol1).ToUpper
             Dim column1 As Integer = GetNumericUpDownValue_ThreadSafe(nmrcInstrument1Column)
             Dim token2 As String = GetTextBoxText_ThreadSafe(txtToken2)
-            Dim symbol2 As String = GetTextBoxText_ThreadSafe(txtSymbol2)
+            Dim symbol2 As String = GetTextBoxText_ThreadSafe(txtSymbol2).ToUpper
             Dim column2 As Integer = GetNumericUpDownValue_ThreadSafe(nmrcInstrument2Column)
             Dim timeFrame As Integer = GetNumericUpDownValue_ThreadSafe(nmrcTimeFrame)
 
@@ -325,7 +325,7 @@ Public Class frmMain
 
             OnHeartbeat("File Copy in progress")
             File.Copy(templateFile, outputFilename)
-            OnHeartbeat("Writing Excel")
+
             Await WriteToExcel(outputFilename, XMinutePayloads).ConfigureAwait(False)
             OnHeartbeat("Process Complete")
 
@@ -356,6 +356,7 @@ Public Class frmMain
 
     Private Async Function WriteToExcel(ByVal outputFileName As String, ByVal dataToWrite As Dictionary(Of Date, PairPayload)) As Task
         Await Task.Delay(0, _canceller.Token).ConfigureAwait(False)
+        OnHeartbeat("Opening Excel")
         Using excelWriter As New Utilities.DAL.ExcelHelper(outputFileName, Utilities.DAL.ExcelHelper.ExcelOpenStatus.OpenExistingForReadWrite, Utilities.DAL.ExcelHelper.ExcelSaveType.XLS_XLSX, _canceller)
             AddHandler excelWriter.Heartbeat, AddressOf OnHeartbeat
             AddHandler excelWriter.WaitingFor, AddressOf OnWaitingFor
@@ -450,14 +451,27 @@ Public Class frmMain
                 mainRawData = Nothing
 
                 'After Processing
-                excelWriter.SetData(3, 34, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1LotSize))
-                excelWriter.SetData(3, 35, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2LotSize))
-                excelWriter.SetData(4, 34, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
-                excelWriter.SetData(4, 35, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2NumberOfLots))
-                excelWriter.SetData(5, 34, GetTextBoxText_ThreadSafe(txtInstrument1Brokerage))
-                excelWriter.SetData(5, 35, GetTextBoxText_ThreadSafe(txtInstrument2Brokerage))
-                excelWriter.SetData(8, 34, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Hour)
-                excelWriter.SetData(8, 35, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Minute)
+                Try
+                    excelWriter.CreateNewSheet("Settings")
+                Catch ex As Exception
+                    Console.WriteLine(ex.Message)
+                    'Ignore this error as 'Settings' sheet may be available
+                End Try
+                excelWriter.SetActiveSheet("Settings")
+                excelWriter.SetData(1, 2, "Instrument 1")
+                excelWriter.SetData(1, 3, "Instrument 2")
+                excelWriter.SetData(2, 1, "Lot Size")
+                excelWriter.SetData(2, 2, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1LotSize))
+                excelWriter.SetData(2, 3, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2LotSize))
+                excelWriter.SetData(3, 1, "Number Of Lots")
+                excelWriter.SetData(3, 2, GetNumericUpDownValue_ThreadSafe(nmrcInstrument1NumberOfLots))
+                excelWriter.SetData(3, 3, GetNumericUpDownValue_ThreadSafe(nmrcInstrument2NumberOfLots))
+                excelWriter.SetData(4, 1, "Brokerage")
+                excelWriter.SetData(4, 2, GetTextBoxText_ThreadSafe(txtInstrument1Brokerage))
+                excelWriter.SetData(4, 3, GetTextBoxText_ThreadSafe(txtInstrument2Brokerage))
+                excelWriter.SetData(5, 1, "EOD Exit Time")
+                excelWriter.SetData(5, 2, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Hour)
+                excelWriter.SetData(5, 3, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Minute)
             End If
             excelWriter.SaveExcel()
         End Using
