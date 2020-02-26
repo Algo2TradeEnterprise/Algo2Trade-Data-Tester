@@ -66,6 +66,8 @@ Public Class HistoricalDataFetcher
 
                         Dim candleData As Dictionary(Of Date, Payload) = cmn.GetRawPayloadForSpecificTradingSymbol(_table, instrumentList(runningInstrument), fromDate, toDate)
                         If candleData IsNot Nothing AndAlso candleData.Count > 0 Then
+                            'Dim xMinuteData As Dictionary(Of Date, Payload) = Common.ConvertPayloadsToXMinutes(candleData, 5, New Date(2020, 2, 26, 9, 15, 0))
+                            'GetChartFromDatabase(xMinuteData, counter, instrumentList(runningInstrument))
                             GetChartFromDatabase(candleData, counter, instrumentList(runningInstrument))
                         Else
                             Throw New ApplicationException(String.Format("No data found from database for {0}", instrumentList(runningInstrument)))
