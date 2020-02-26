@@ -263,9 +263,9 @@ Public Class frmMain
             If fromDate > toDate Then
                 Throw New ApplicationException("From Date can not be greater than To Date")
             End If
-            If (toDate - fromDate).TotalDays > 25 Then
-                Throw New ApplicationException("Cannot fetch data more than 25 days")
-            End If
+            'If (toDate - fromDate).TotalDays > 25 Then
+            '    Throw New ApplicationException("Cannot fetch data more than 25 days")
+            'End If
 
             Dim token1 As String = GetTextBoxText_ThreadSafe(txtToken1)
             Dim symbol1 As String = GetTextBoxText_ThreadSafe(txtSymbol1).ToUpper

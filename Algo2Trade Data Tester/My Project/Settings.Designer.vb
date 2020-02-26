@@ -82,9 +82,9 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("server=59.90.230.163;database=local_stock;port=3306;user id=rio;password=speech12"& _ 
-            "3;defaultcommandtimeout=180;pooling=True;minpoolsize=2;maxpoolsize=5;useaffected"& _ 
-            "rows=False;allowuservariables=True")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("server=103.57.246.210;database=local_stock;port=3306;user id=rio;password=speech1"& _ 
+            "23;defaultcommandtimeout=180;pooling=True;minpoolsize=2;maxpoolsize=5;useaffecte"& _ 
+            "drows=False;allowuservariables=True")>  _
         Public Property dbConnectionRemote() As String
             Get
                 Return CType(Me("dbConnectionRemote"),String)
