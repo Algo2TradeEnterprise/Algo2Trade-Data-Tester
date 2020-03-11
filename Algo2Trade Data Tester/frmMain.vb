@@ -170,6 +170,18 @@ Public Class frmMain
             [datagrid].DataSource = [table]
         End If
     End Sub
+
+    Delegate Function GetRadioButtonChecked_Delegate(ByVal [radiobutton] As RadioButton) As Boolean
+    Public Function GetRadioButtonChecked_ThreadSafe(ByVal [radiobutton] As RadioButton) As Boolean
+        ' InvokeRequired required compares the thread ID of the calling thread to the thread ID of the creating thread.  
+        ' If these threads are different, it returns true.  
+        If [radiobutton].InvokeRequired Then
+            Dim MyDelegate As New GetRadioButtonChecked_Delegate(AddressOf GetRadioButtonChecked_ThreadSafe)
+            Return Me.Invoke(MyDelegate, New Object() {[radiobutton]})
+        Else
+            Return [radiobutton].Checked
+        End If
+    End Function
 #End Region
 
 #Region "Event Handlers"
@@ -206,7 +218,6 @@ Public Class frmMain
         End If
         rdbLive.Checked = My.Settings.Live
         rdbDatabase.Checked = My.Settings.Database
-        cmbTable.SelectedIndex = My.Settings.TableIndex
     End Sub
 
     Private Async Sub btnStart_Click(sender As Object, e As EventArgs) Handles btnStart.Click
@@ -215,30 +226,28 @@ Public Class frmMain
         SetObjectEnableDisable_ThreadSafe(btnStart, False)
         SetObjectEnableDisable_ThreadSafe(btnStop, True)
 
-        My.Settings.ComboBoxIndex = GetComboBoxIndex_ThreadSafe(cmbSymbol)
-        My.Settings.Live = rdbLive.Checked
-        My.Settings.Database = rdbDatabase.Checked
-        My.Settings.TableIndex =GetComboBoxIndex_ThreadSafe(cmbTable)
-        My.Settings.Save()
-
         Dim symbolDetails As PairSymbolDetails = New PairSymbolDetails With {
+            .Instrument1AutoSelectTradingSymbol = chkbAutoSelectTradingSymbol1.Checked,
+            .Instrument1Table = cmbTable1.SelectedIndex,
             .Instrument1Name = txtSymbol1.Text.Trim.ToUpper,
             .Instrument1Token = txtToken1.Text.Trim,
             .Instrument1StartingColumn = nmrcInstrument1Column.Value,
             .Instrument1LotSize = nmrcInstrument1LotSize.Value,
             .Instrument1NumberOfLots = nmrcInstrument1NumberOfLots.Value,
             .Instrument1Brokerage = txtInstrument1Brokerage.Text,
+            .Instrument2AutoSelectTradingSymbol = chkbAutoSelectTradingSymbol2.Checked,
+            .Instrument2Table = cmbTable2.SelectedIndex,
             .Instrument2Name = txtSymbol2.Text.Trim.ToUpper,
             .Instrument2Token = txtToken2.Text.Trim,
             .Instrument2StartingColumn = nmrcInstrument2Column.Value,
             .Instrument2LotSize = nmrcInstrument2LotSize.Value,
             .Instrument2NumberOfLots = nmrcInstrument2NumberOfLots.Value,
             .Instrument2Brokerage = txtInstrument2Brokerage.Text,
-            .EODExitTime = dtpckrEODTime.Value,
             .FromDate = dtpckrFromDate.Value,
             .ToDate = dtpckrToDate.Value,
             .TemplateFilePath = txtFilePath.Text,
-            .TimeFrame = nmrcTimeFrame.Value
+            .TimeFrame = cmbTimeframe.SelectedItem,
+            .ExchangeStartTime = dtPckrExchangeTime.Value
         }
 
         Dim combineInstrumentName As String = String.Format("{0}_{1}", symbolDetails.Instrument1Name, symbolDetails.Instrument2Name)
@@ -247,15 +256,20 @@ Public Class frmMain
         Else
             _symbolList.Add(combineInstrumentName, symbolDetails)
             cmbSymbol.Items.Add(combineInstrumentName)
-            cmbSymbol.SelectedItem = combineInstrumentName
         End If
+        cmbSymbol.SelectedItem = combineInstrumentName
+
+        My.Settings.ComboBoxIndex = GetComboBoxIndex_ThreadSafe(cmbSymbol)
+        My.Settings.Live = rdbLive.Checked
+        My.Settings.Database = rdbDatabase.Checked
+        My.Settings.Save()
+
         Utilities.Strings.SerializeFromCollection(Of Dictionary(Of String, PairSymbolDetails))(_fileName, _symbolList)
 
         Await Task.Run(AddressOf StartProcessing).ConfigureAwait(False)
     End Sub
     Private Async Function StartProcessing() As Task
         Try
-            Dim instrumentList As Dictionary(Of Integer, String) = Nothing
             Dim fromDate As Date = GetDateTimePickerValue_ThreadSafe(dtpckrFromDate)
             Dim toDate As Date = GetDateTimePickerValue_ThreadSafe(dtpckrToDate)
             fromDate = fromDate.Date
@@ -263,52 +277,34 @@ Public Class frmMain
             If fromDate > toDate Then
                 Throw New ApplicationException("From Date can not be greater than To Date")
             End If
-            'If (toDate - fromDate).TotalDays > 25 Then
-            '    Throw New ApplicationException("Cannot fetch data more than 25 days")
-            'End If
 
             Dim token1 As String = GetTextBoxText_ThreadSafe(txtToken1)
             Dim symbol1 As String = GetTextBoxText_ThreadSafe(txtSymbol1).ToUpper
-            Dim column1 As Integer = GetNumericUpDownValue_ThreadSafe(nmrcInstrument1Column)
             Dim token2 As String = GetTextBoxText_ThreadSafe(txtToken2)
             Dim symbol2 As String = GetTextBoxText_ThreadSafe(txtSymbol2).ToUpper
-            Dim column2 As Integer = GetNumericUpDownValue_ThreadSafe(nmrcInstrument2Column)
-            Dim timeFrame As Integer = GetNumericUpDownValue_ThreadSafe(nmrcTimeFrame)
+            Dim timeFrame As Integer = GetComboBoxIndex_ThreadSafe(cmbTimeframe)
 
-            If token1 IsNot Nothing AndAlso token1.Trim <> "" AndAlso
-                symbol1 IsNot Nothing AndAlso symbol1.Trim <> "" Then
-                If instrumentList Is Nothing Then instrumentList = New Dictionary(Of Integer, String)
-                symbol1 = symbol1.ToUpper
-                instrumentList.Add(Val(token1), symbol1)
-            Else
+            If Not (token1 IsNot Nothing AndAlso token1.Trim <> "" AndAlso
+                symbol1 IsNot Nothing AndAlso symbol1.Trim <> "") Then
                 Throw New ApplicationException("Instrument 1 details cannot be blank")
             End If
 
-            If token2 IsNot Nothing AndAlso token2.Trim <> "" AndAlso
-                symbol2 IsNot Nothing AndAlso symbol2.Trim <> "" Then
-                If instrumentList Is Nothing Then instrumentList = New Dictionary(Of Integer, String)
-                symbol2 = symbol2.ToUpper
-                instrumentList.Add(Val(token2), symbol2)
-            Else
+            If Not (token2 IsNot Nothing AndAlso token2.Trim <> "" AndAlso
+                symbol2 IsNot Nothing AndAlso symbol2.Trim <> "") Then
                 symbol2 = Nothing
             End If
 
-            Dim historicalData As Dictionary(Of Date, PairPayload) = Nothing
-            Using dataFetcher As New HistoricalDataFetcher(_canceller)
+            Dim symbolDetails As PairSymbolDetails = _symbolList(GetComboBoxItem_ThreadSafe(cmbSymbol))
+
+            Dim pairData As Dictionary(Of Date, PairPayload) = Nothing
+            Using dataFetcher As New HistoricalDataFetcher(_canceller, GetRadioButtonChecked_ThreadSafe(rdbDatabase))
                 AddHandler dataFetcher.Heartbeat, AddressOf OnHeartbeat
                 AddHandler dataFetcher.WaitingFor, AddressOf OnWaitingFor
                 AddHandler dataFetcher.DocumentRetryStatus, AddressOf OnDocumentRetryStatus
                 AddHandler dataFetcher.DocumentDownloadComplete, AddressOf OnDocumentDownloadComplete
-                historicalData = Await dataFetcher.ProcessHistoricalData(instrumentList, fromDate, toDate).ConfigureAwait(False)
+                pairData = Await dataFetcher.GetInstrumentsData(symbolDetails, fromDate, toDate).ConfigureAwait(False)
             End Using
             OnHeartbeat("Payload generation complete")
-
-            Dim XMinutePayloads As Dictionary(Of Date, PairPayload) = Nothing
-            If timeFrame > 1 Then
-                XMinutePayloads = ConvertPayloadsToXMinutes(historicalData, timeFrame)
-            Else
-                XMinutePayloads = historicalData
-            End If
 
             Dim templateFile As String = GetTextBoxText_ThreadSafe(txtFilePath)
             Dim combinationOfSymbolName As String = String.Format("{0}{1}{2}", symbol1, If(symbol2 IsNot Nothing, "_", ""), If(symbol2 IsNot Nothing, symbol2, ""))
@@ -326,7 +322,7 @@ Public Class frmMain
             OnHeartbeat("File Copy in progress")
             File.Copy(templateFile, outputFilename)
 
-            Await WriteToExcel(outputFilename, XMinutePayloads).ConfigureAwait(False)
+            Await WriteToExcel(outputFilename, pairData).ConfigureAwait(False)
             OnHeartbeat("Process Complete")
 
             If MessageBox.Show("Do you want to open file?", "Algo2Trade Data Tester", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
@@ -369,34 +365,36 @@ Public Class frmMain
             If dataToWrite IsNot Nothing AndAlso dataToWrite.Count > 0 Then
                 Dim mainRawData(dataToWrite.Count - 1, 13) As Object
                 Dim dateCtr As Integer = 0
-                Dim lastInstrument1Data As OHLCPayload = Nothing
-                Dim lastInstrument2Data As OHLCPayload = Nothing
-                For Each runningData In dataToWrite
+                Dim lastInstrument1Data As Payload = Nothing
+                Dim lastInstrument2Data As Payload = Nothing
+                For Each runningData In dataToWrite.OrderBy(Function(x)
+                                                                Return x.Key
+                                                            End Function)
                     dateCtr += 1
                     OnHeartbeat(String.Format("Excel printing for Date: {0} [{1} of {2}]", runningData.Key.Date.ToShortDateString, dateCtr, dataToWrite.Count))
 
                     If runningData.Value.Instrument1Payload IsNot Nothing Then
                         columnCounter = instrument1StartingColumn
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.PayloadDate.ToString("dd-MM-yyyy HH:mm:ss")
+                        columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.TradingSymbol
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.SnapshotDateTime
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.Open
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.OpenPrice
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.Low
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.LowPrice
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.High
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.HighPrice
-                        columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.ClosePrice
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.Close
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.Volume
 
                         lastInstrument1Data = runningData.Value.Instrument1Payload
                     Else
                         columnCounter = instrument1StartingColumn
-                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.TradingSymbol
+                        mainRawData(rowCounter, columnCounter) = runningData.Key.ToString("dd-MM-yyyy HH:mm:ss")
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Key
+                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.TradingSymbol
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = ""
                         columnCounter += 1
@@ -411,26 +409,26 @@ Public Class frmMain
 
                     If runningData.Value.Instrument2Payload IsNot Nothing Then
                         columnCounter = instrument2StartingColumn
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.PayloadDate.ToString("dd-MM-yyyy HH:mm:ss")
+                        columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.TradingSymbol
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.SnapshotDateTime
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.Open
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.OpenPrice
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.Low
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.LowPrice
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.High
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.HighPrice
-                        columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.ClosePrice
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.Close
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.Volume
 
                         lastInstrument2Data = runningData.Value.Instrument2Payload
                     Else
                         columnCounter = instrument2StartingColumn
-                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.TradingSymbol
+                        mainRawData(rowCounter, columnCounter) = runningData.Key.ToString("dd-MM-yyyy HH:mm:ss")
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = runningData.Key
+                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.TradingSymbol
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = ""
                         columnCounter += 1
@@ -469,9 +467,6 @@ Public Class frmMain
                 excelWriter.SetData(4, 1, "Brokerage")
                 excelWriter.SetData(4, 2, GetTextBoxText_ThreadSafe(txtInstrument1Brokerage))
                 excelWriter.SetData(4, 3, GetTextBoxText_ThreadSafe(txtInstrument2Brokerage))
-                excelWriter.SetData(5, 1, "EOD Exit Time")
-                excelWriter.SetData(5, 2, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Hour)
-                excelWriter.SetData(5, 3, GetDateTimePickerValue_ThreadSafe(dtpckrEODTime).Minute)
             End If
             excelWriter.SaveExcel()
         End Using
@@ -485,6 +480,8 @@ Public Class frmMain
     End Sub
 
     Private Sub LoadSettings(ByVal data As PairSymbolDetails)
+        chkbAutoSelectTradingSymbol1.Checked = data.Instrument1AutoSelectTradingSymbol
+        cmbTable1.SelectedIndex = data.Instrument1Table
         txtToken1.Text = data.Instrument1Token
         txtSymbol1.Text = data.Instrument1Name
         nmrcInstrument1Column.Value = data.Instrument1StartingColumn
@@ -492,6 +489,8 @@ Public Class frmMain
         nmrcInstrument1NumberOfLots.Value = data.Instrument1NumberOfLots
         txtInstrument1Brokerage.Text = data.Instrument1Brokerage
 
+        chkbAutoSelectTradingSymbol2.Checked = data.Instrument2AutoSelectTradingSymbol
+        cmbTable2.SelectedIndex = data.Instrument2Table
         txtToken2.Text = data.Instrument2Token
         txtSymbol2.Text = data.Instrument2Name
         nmrcInstrument2Column.Value = data.Instrument2StartingColumn
@@ -502,86 +501,33 @@ Public Class frmMain
         txtFilePath.Text = data.TemplateFilePath
         dtpckrFromDate.Value = data.FromDate.Date
         dtpckrToDate.Value = data.ToDate.Date
-        dtpckrEODTime.Value = data.EODExitTime
-        nmrcTimeFrame.Value = data.TimeFrame
+        cmbTimeframe.SelectedItem = data.TimeFrame
+        If data.ExchangeStartTime <> Date.MinValue Then
+            dtPckrExchangeTime.Value = data.ExchangeStartTime
+        Else
+            dtPckrExchangeTime.Value = New Date(Now.Year, Now.Month, Now.Day, 9, 15, 0)
+        End If
     End Sub
 
-    Public Function ConvertPayloadsToXMinutes(ByVal inputPayload As Dictionary(Of Date, PairPayload), ByVal minute As Integer) As Dictionary(Of Date, PairPayload)
-        OnHeartbeat(String.Format("Converting to {0} minutes", minute))
-        Dim XMinutePayloads As Dictionary(Of Date, PairPayload) = Nothing
-        If inputPayload IsNot Nothing AndAlso inputPayload.Count > 0 Then
-            Dim newCandleStarted As Boolean = True
-            Dim runningOutputPayload As PairPayload = Nothing
-            Dim startTime As Date = Date.MaxValue
-            Dim endTime As Date = Date.MaxValue
-            For Each runningPayload In inputPayload.Keys
-                If runningPayload >= endTime Then
-                    newCandleStarted = True
-                    If runningOutputPayload IsNot Nothing Then
-                        If XMinutePayloads Is Nothing Then XMinutePayloads = New Dictionary(Of Date, PairPayload)
-                        XMinutePayloads.Add(runningPayload, runningOutputPayload)
-                    End If
-                End If
-                If newCandleStarted Then
-                    newCandleStarted = False
-                    startTime = runningPayload
-                    endTime = runningPayload.AddMinutes(minute)
-                    runningOutputPayload = New PairPayload
-                    runningOutputPayload.Instrument1Payload = New OHLCPayload
-                    runningOutputPayload.Instrument1Payload.SnapshotDateTime = startTime
-                    If inputPayload(runningPayload).Instrument1Payload IsNot Nothing Then
-                        runningOutputPayload.Instrument1Payload.OpenPrice = inputPayload(runningPayload).Instrument1Payload.OpenPrice
-                        runningOutputPayload.Instrument1Payload.LowPrice = inputPayload(runningPayload).Instrument1Payload.LowPrice
-                        runningOutputPayload.Instrument1Payload.HighPrice = inputPayload(runningPayload).Instrument1Payload.HighPrice
-                        runningOutputPayload.Instrument1Payload.ClosePrice = inputPayload(runningPayload).Instrument1Payload.ClosePrice
-                        runningOutputPayload.Instrument1Payload.Volume = inputPayload(runningPayload).Instrument1Payload.Volume
-                        runningOutputPayload.Instrument1Payload.TradingSymbol = inputPayload(runningPayload).Instrument1Payload.TradingSymbol
-                    End If
-
-
-                    runningOutputPayload.Instrument2Payload = New OHLCPayload
-                    runningOutputPayload.Instrument2Payload.SnapshotDateTime = startTime
-                    If inputPayload(runningPayload).Instrument2Payload IsNot Nothing Then
-                        runningOutputPayload.Instrument2Payload.OpenPrice = inputPayload(runningPayload).Instrument2Payload.OpenPrice
-                        runningOutputPayload.Instrument2Payload.LowPrice = inputPayload(runningPayload).Instrument2Payload.LowPrice
-                        runningOutputPayload.Instrument2Payload.HighPrice = inputPayload(runningPayload).Instrument2Payload.HighPrice
-                        runningOutputPayload.Instrument2Payload.ClosePrice = inputPayload(runningPayload).Instrument2Payload.ClosePrice
-                        runningOutputPayload.Instrument2Payload.Volume = inputPayload(runningPayload).Instrument2Payload.Volume
-                        runningOutputPayload.Instrument2Payload.TradingSymbol = inputPayload(runningPayload).Instrument2Payload.TradingSymbol
-                    End If
-                Else
-                    If inputPayload(runningPayload).Instrument1Payload IsNot Nothing Then
-                        runningOutputPayload.Instrument1Payload.HighPrice = Math.Max(runningOutputPayload.Instrument1Payload.HighPrice, inputPayload(runningPayload).Instrument1Payload.HighPrice)
-                        runningOutputPayload.Instrument1Payload.LowPrice = Math.Min(runningOutputPayload.Instrument1Payload.LowPrice, inputPayload(runningPayload).Instrument1Payload.LowPrice)
-                        runningOutputPayload.Instrument1Payload.ClosePrice = inputPayload(runningPayload).Instrument1Payload.ClosePrice
-                        runningOutputPayload.Instrument1Payload.Volume = runningOutputPayload.Instrument1Payload.Volume + inputPayload(runningPayload).Instrument1Payload.Volume
-                    End If
-
-                    If inputPayload(runningPayload).Instrument2Payload IsNot Nothing Then
-                        runningOutputPayload.Instrument2Payload.HighPrice = Math.Max(runningOutputPayload.Instrument2Payload.HighPrice, inputPayload(runningPayload).Instrument2Payload.HighPrice)
-                        runningOutputPayload.Instrument2Payload.LowPrice = Math.Min(runningOutputPayload.Instrument2Payload.LowPrice, inputPayload(runningPayload).Instrument2Payload.LowPrice)
-                        runningOutputPayload.Instrument2Payload.ClosePrice = inputPayload(runningPayload).Instrument2Payload.ClosePrice
-                        runningOutputPayload.Instrument2Payload.Volume = runningOutputPayload.Instrument2Payload.Volume + inputPayload(runningPayload).Instrument2Payload.Volume
-                    End If
-                End If
-            Next
-            If runningOutputPayload IsNot Nothing Then
-                If XMinutePayloads Is Nothing Then
-                    XMinutePayloads = New Dictionary(Of Date, PairPayload)
-                    XMinutePayloads.Add(runningOutputPayload.Instrument1Payload.SnapshotDateTime, runningOutputPayload)
-                Else
-                    XMinutePayloads(runningOutputPayload.Instrument1Payload.SnapshotDateTime) = runningOutputPayload
-                End If
-            End If
-        End If
-        Return XMinutePayloads
-    End Function
-
     Private Sub rdbLive_CheckedChanged(sender As Object, e As EventArgs) Handles rdbLive.CheckedChanged
-        cmbTable.Enabled = False
+        cmbTable1.Enabled = False
+        cmbTable2.Enabled = False
+
+        chkbAutoSelectTradingSymbol1.Checked = False
+        chkbAutoSelectTradingSymbol1.Enabled = False
+
+        chkbAutoSelectTradingSymbol2.Checked = False
+        chkbAutoSelectTradingSymbol2.Enabled = False
     End Sub
 
     Private Sub rdbDatabase_CheckedChanged(sender As Object, e As EventArgs) Handles rdbDatabase.CheckedChanged
-        cmbTable.Enabled = True
+        cmbTable1.Enabled = True
+        cmbTable2.Enabled = True
+
+        chkbAutoSelectTradingSymbol1.Checked = True
+        chkbAutoSelectTradingSymbol1.Enabled = True
+
+        chkbAutoSelectTradingSymbol2.Checked = True
+        chkbAutoSelectTradingSymbol2.Enabled = True
     End Sub
 End Class

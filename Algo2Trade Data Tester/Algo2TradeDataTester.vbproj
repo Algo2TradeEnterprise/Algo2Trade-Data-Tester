@@ -104,7 +104,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="OHLCPayload.vb" />
     <Compile Include="PairPayload.vb" />
     <Compile Include="PairSymbolDetails.vb" />
     <Compile Include="Payload.vb" />

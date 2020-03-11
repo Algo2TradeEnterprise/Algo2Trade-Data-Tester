@@ -14,9 +14,6 @@
     <Setting Name="dbConnectionLocal" Type="System.String" Scope="User">
       <Value Profile="(Default)">server=localhost;database=local_stock;port=3306;user id=rio;password=speech123;defaultcommandtimeout=180;pooling=True;minpoolsize=2;maxpoolsize=5;useaffectedrows=False;allowuservariables=True</Value>
     </Setting>
-    <Setting Name="TableIndex" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
     <Setting Name="Live" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
