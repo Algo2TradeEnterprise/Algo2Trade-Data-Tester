@@ -264,6 +264,7 @@ Public Class frmMain
         My.Settings.Database = rdbDatabase.Checked
         My.Settings.Save()
 
+        If File.Exists(_fileName) Then File.Delete(_fileName)
         Utilities.Strings.SerializeFromCollection(Of Dictionary(Of String, PairSymbolDetails))(_fileName, _symbolList)
 
         Await Task.Run(AddressOf StartProcessing).ConfigureAwait(False)
@@ -375,7 +376,7 @@ Public Class frmMain
 
                     If runningData.Value.Instrument1Payload IsNot Nothing Then
                         columnCounter = instrument1StartingColumn
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.PayloadDate.ToString("dd-MM-yyyy HH:mm:ss")
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.PayloadDate
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument1Payload.TradingSymbol
                         columnCounter += 1
@@ -392,7 +393,7 @@ Public Class frmMain
                         lastInstrument1Data = runningData.Value.Instrument1Payload
                     Else
                         columnCounter = instrument1StartingColumn
-                        mainRawData(rowCounter, columnCounter) = runningData.Key.ToString("dd-MM-yyyy HH:mm:ss")
+                        mainRawData(rowCounter, columnCounter) = runningData.Key
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = lastInstrument1Data.TradingSymbol
                         columnCounter += 1
@@ -409,7 +410,7 @@ Public Class frmMain
 
                     If runningData.Value.Instrument2Payload IsNot Nothing Then
                         columnCounter = instrument2StartingColumn
-                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.PayloadDate.ToString("dd-MM-yyyy HH:mm:ss")
+                        mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.PayloadDate
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = runningData.Value.Instrument2Payload.TradingSymbol
                         columnCounter += 1
@@ -426,7 +427,7 @@ Public Class frmMain
                         lastInstrument2Data = runningData.Value.Instrument2Payload
                     Else
                         columnCounter = instrument2StartingColumn
-                        mainRawData(rowCounter, columnCounter) = runningData.Key.ToString("dd-MM-yyyy HH:mm:ss")
+                        mainRawData(rowCounter, columnCounter) = runningData.Key
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = lastInstrument2Data.TradingSymbol
                         columnCounter += 1
@@ -513,10 +514,7 @@ Public Class frmMain
         cmbTable1.Enabled = False
         cmbTable2.Enabled = False
 
-        chkbAutoSelectTradingSymbol1.Checked = False
         chkbAutoSelectTradingSymbol1.Enabled = False
-
-        chkbAutoSelectTradingSymbol2.Checked = False
         chkbAutoSelectTradingSymbol2.Enabled = False
     End Sub
 
@@ -524,10 +522,7 @@ Public Class frmMain
         cmbTable1.Enabled = True
         cmbTable2.Enabled = True
 
-        'chkbAutoSelectTradingSymbol1.Checked = True
         chkbAutoSelectTradingSymbol1.Enabled = True
-
-        'chkbAutoSelectTradingSymbol2.Checked = True
         chkbAutoSelectTradingSymbol2.Enabled = True
     End Sub
 End Class

@@ -26,6 +26,9 @@ Partial Class frmMain
         Me.lblProgress = New System.Windows.Forms.Label()
         Me.btnStart = New System.Windows.Forms.Button()
         Me.grpBoxInstrument1 = New System.Windows.Forms.GroupBox()
+        Me.chkbAutoSelectTradingSymbol1 = New System.Windows.Forms.CheckBox()
+        Me.cmbTable1 = New System.Windows.Forms.ComboBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.lblInstrument1Brokerage = New System.Windows.Forms.Label()
         Me.txtInstrument1Brokerage = New System.Windows.Forms.TextBox()
         Me.nmrcInstrument1NumberOfLots = New System.Windows.Forms.NumericUpDown()
@@ -39,6 +42,9 @@ Partial Class frmMain
         Me.txtToken1 = New System.Windows.Forms.TextBox()
         Me.lblToken1 = New System.Windows.Forms.Label()
         Me.grpBoxInstrument2 = New System.Windows.Forms.GroupBox()
+        Me.chkbAutoSelectTradingSymbol2 = New System.Windows.Forms.CheckBox()
+        Me.cmbTable2 = New System.Windows.Forms.ComboBox()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.lblInstrument2Brokerage = New System.Windows.Forms.Label()
         Me.txtInstrument2Brokerage = New System.Windows.Forms.TextBox()
         Me.nmrcInstrument2NumberOfLots = New System.Windows.Forms.NumericUpDown()
@@ -67,15 +73,9 @@ Partial Class frmMain
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.rdbDatabase = New System.Windows.Forms.RadioButton()
         Me.rdbLive = New System.Windows.Forms.RadioButton()
-        Me.cmbTable1 = New System.Windows.Forms.ComboBox()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.cmbTable2 = New System.Windows.Forms.ComboBox()
-        Me.Label3 = New System.Windows.Forms.Label()
         Me.cmbTimeframe = New System.Windows.Forms.ComboBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.dtPckrExchangeTime = New System.Windows.Forms.DateTimePicker()
-        Me.chkbAutoSelectTradingSymbol1 = New System.Windows.Forms.CheckBox()
-        Me.chkbAutoSelectTradingSymbol2 = New System.Windows.Forms.CheckBox()
         Me.grpBoxInstrument1.SuspendLayout()
         CType(Me.nmrcInstrument1NumberOfLots, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.nmrcInstrument1LotSize, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -128,6 +128,37 @@ Partial Class frmMain
         Me.grpBoxInstrument1.TabIndex = 2
         Me.grpBoxInstrument1.TabStop = False
         Me.grpBoxInstrument1.Text = "Instrument 1 Details"
+        '
+        'chkbAutoSelectTradingSymbol1
+        '
+        Me.chkbAutoSelectTradingSymbol1.AutoSize = True
+        Me.chkbAutoSelectTradingSymbol1.Checked = True
+        Me.chkbAutoSelectTradingSymbol1.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkbAutoSelectTradingSymbol1.Location = New System.Drawing.Point(15, 27)
+        Me.chkbAutoSelectTradingSymbol1.Name = "chkbAutoSelectTradingSymbol1"
+        Me.chkbAutoSelectTradingSymbol1.Size = New System.Drawing.Size(205, 21)
+        Me.chkbAutoSelectTradingSymbol1.TabIndex = 14
+        Me.chkbAutoSelectTradingSymbol1.Text = "Auto Select Trading Symbol"
+        Me.chkbAutoSelectTradingSymbol1.UseVisualStyleBackColor = True
+        '
+        'cmbTable1
+        '
+        Me.cmbTable1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbTable1.FormattingEnabled = True
+        Me.cmbTable1.Items.AddRange(New Object() {"Cash", "Futures", "Commodity", "Currency"})
+        Me.cmbTable1.Location = New System.Drawing.Point(136, 56)
+        Me.cmbTable1.Name = "cmbTable1"
+        Me.cmbTable1.Size = New System.Drawing.Size(193, 24)
+        Me.cmbTable1.TabIndex = 13
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(12, 61)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(44, 17)
+        Me.Label2.TabIndex = 12
+        Me.Label2.Text = "Table"
         '
         'lblInstrument1Brokerage
         '
@@ -251,6 +282,37 @@ Partial Class frmMain
         Me.grpBoxInstrument2.TabIndex = 3
         Me.grpBoxInstrument2.TabStop = False
         Me.grpBoxInstrument2.Text = "Instrument 2 Details"
+        '
+        'chkbAutoSelectTradingSymbol2
+        '
+        Me.chkbAutoSelectTradingSymbol2.AutoSize = True
+        Me.chkbAutoSelectTradingSymbol2.Checked = True
+        Me.chkbAutoSelectTradingSymbol2.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkbAutoSelectTradingSymbol2.Location = New System.Drawing.Point(15, 27)
+        Me.chkbAutoSelectTradingSymbol2.Name = "chkbAutoSelectTradingSymbol2"
+        Me.chkbAutoSelectTradingSymbol2.Size = New System.Drawing.Size(205, 21)
+        Me.chkbAutoSelectTradingSymbol2.TabIndex = 20
+        Me.chkbAutoSelectTradingSymbol2.Text = "Auto Select Trading Symbol"
+        Me.chkbAutoSelectTradingSymbol2.UseVisualStyleBackColor = True
+        '
+        'cmbTable2
+        '
+        Me.cmbTable2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbTable2.FormattingEnabled = True
+        Me.cmbTable2.Items.AddRange(New Object() {"Cash", "Futures", "Commodity", "Currency"})
+        Me.cmbTable2.Location = New System.Drawing.Point(136, 54)
+        Me.cmbTable2.Name = "cmbTable2"
+        Me.cmbTable2.Size = New System.Drawing.Size(193, 24)
+        Me.cmbTable2.TabIndex = 19
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(12, 59)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(44, 17)
+        Me.Label3.TabIndex = 18
+        Me.Label3.Text = "Table"
         '
         'lblInstrument2Brokerage
         '
@@ -495,44 +557,6 @@ Partial Class frmMain
         Me.rdbLive.Text = "Live"
         Me.rdbLive.UseVisualStyleBackColor = True
         '
-        'cmbTable1
-        '
-        Me.cmbTable1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbTable1.FormattingEnabled = True
-        Me.cmbTable1.Items.AddRange(New Object() {"Cash", "Future", "Commodity", "Currency"})
-        Me.cmbTable1.Location = New System.Drawing.Point(136, 56)
-        Me.cmbTable1.Name = "cmbTable1"
-        Me.cmbTable1.Size = New System.Drawing.Size(193, 24)
-        Me.cmbTable1.TabIndex = 13
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(12, 61)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(44, 17)
-        Me.Label2.TabIndex = 12
-        Me.Label2.Text = "Table"
-        '
-        'cmbTable2
-        '
-        Me.cmbTable2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbTable2.FormattingEnabled = True
-        Me.cmbTable2.Items.AddRange(New Object() {"Cash", "Futures", "Commodity", "Currency"})
-        Me.cmbTable2.Location = New System.Drawing.Point(136, 54)
-        Me.cmbTable2.Name = "cmbTable2"
-        Me.cmbTable2.Size = New System.Drawing.Size(193, 24)
-        Me.cmbTable2.TabIndex = 19
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(12, 59)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(44, 17)
-        Me.Label3.TabIndex = 18
-        Me.Label3.Text = "Table"
-        '
         'cmbTimeframe
         '
         Me.cmbTimeframe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
@@ -560,30 +584,6 @@ Partial Class frmMain
         Me.dtPckrExchangeTime.ShowUpDown = True
         Me.dtPckrExchangeTime.Size = New System.Drawing.Size(103, 22)
         Me.dtPckrExchangeTime.TabIndex = 17
-        '
-        'chkbAutoSelectTradingSymbol1
-        '
-        Me.chkbAutoSelectTradingSymbol1.AutoSize = True
-        Me.chkbAutoSelectTradingSymbol1.Checked = True
-        Me.chkbAutoSelectTradingSymbol1.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkbAutoSelectTradingSymbol1.Location = New System.Drawing.Point(15, 27)
-        Me.chkbAutoSelectTradingSymbol1.Name = "chkbAutoSelectTradingSymbol1"
-        Me.chkbAutoSelectTradingSymbol1.Size = New System.Drawing.Size(205, 21)
-        Me.chkbAutoSelectTradingSymbol1.TabIndex = 14
-        Me.chkbAutoSelectTradingSymbol1.Text = "Auto Select Trading Symbol"
-        Me.chkbAutoSelectTradingSymbol1.UseVisualStyleBackColor = True
-        '
-        'chkbAutoSelectTradingSymbol2
-        '
-        Me.chkbAutoSelectTradingSymbol2.AutoSize = True
-        Me.chkbAutoSelectTradingSymbol2.Checked = True
-        Me.chkbAutoSelectTradingSymbol2.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkbAutoSelectTradingSymbol2.Location = New System.Drawing.Point(15, 27)
-        Me.chkbAutoSelectTradingSymbol2.Name = "chkbAutoSelectTradingSymbol2"
-        Me.chkbAutoSelectTradingSymbol2.Size = New System.Drawing.Size(205, 21)
-        Me.chkbAutoSelectTradingSymbol2.TabIndex = 20
-        Me.chkbAutoSelectTradingSymbol2.Text = "Auto Select Trading Symbol"
-        Me.chkbAutoSelectTradingSymbol2.UseVisualStyleBackColor = True
         '
         'frmMain
         '
