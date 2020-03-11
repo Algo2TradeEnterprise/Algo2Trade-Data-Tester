@@ -397,13 +397,13 @@ Public Class frmMain
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = lastInstrument1Data.TradingSymbol
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Open
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Low
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.High
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Close
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = ""
                     End If
@@ -431,13 +431,13 @@ Public Class frmMain
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = lastInstrument2Data.TradingSymbol
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Open
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Low
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.High
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = ""
+                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Close
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = ""
                     End If
