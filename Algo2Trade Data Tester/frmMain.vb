@@ -524,10 +524,10 @@ Public Class frmMain
         cmbTable1.Enabled = True
         cmbTable2.Enabled = True
 
-        chkbAutoSelectTradingSymbol1.Checked = True
+        'chkbAutoSelectTradingSymbol1.Checked = True
         chkbAutoSelectTradingSymbol1.Enabled = True
 
-        chkbAutoSelectTradingSymbol2.Checked = True
+        'chkbAutoSelectTradingSymbol2.Checked = True
         chkbAutoSelectTradingSymbol2.Enabled = True
     End Sub
 End Class
