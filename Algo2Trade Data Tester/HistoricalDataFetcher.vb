@@ -127,17 +127,17 @@ Public Class HistoricalDataFetcher
             If autoSelectTradingSymbol Then
                 Dim startDate As Date = fromDate
                 While startDate.Date <= toDate.Date
-                    Dim tradingSymbol As String = Nothing
-                    If instrumentNumber = 1 Then
-                        tradingSymbol = cmn.GetCurrentTradingSymbol(table, startDate, instrumentName)
-                    ElseIf instrumentNumber = 2 Then
-                        tradingSymbol = cmn.GetNextTradingSymbol(table, startDate, instrumentName)
-                    End If
-                    Dim requiredData As Dictionary(Of Date, Payload) = Nothing
-                    If tradingSymbol IsNot Nothing Then
-                        requiredData = cmn.GetRawPayloadForSpecificTradingSymbol(table, tradingSymbol, startDate, startDate)
-                    End If
-                    'Dim requiredData As Dictionary(Of Date, Payload) = cmn.GetRawPayload(table, instrumentName, startDate, startDate)
+                    'Dim tradingSymbol As String = Nothing
+                    'If instrumentNumber = 1 Then
+                    '    tradingSymbol = cmn.GetCurrentTradingSymbol(table, startDate, instrumentName)
+                    'ElseIf instrumentNumber = 2 Then
+                    '    tradingSymbol = cmn.GetNextTradingSymbol(table, startDate, instrumentName)
+                    'End If
+                    'Dim requiredData As Dictionary(Of Date, Payload) = Nothing
+                    'If tradingSymbol IsNot Nothing Then
+                    '    requiredData = cmn.GetRawPayloadForSpecificTradingSymbol(table, tradingSymbol, startDate, startDate)
+                    'End If
+                    Dim requiredData As Dictionary(Of Date, Payload) = cmn.GetRawPayload(table, instrumentName, startDate, startDate)
                     If requiredData IsNot Nothing AndAlso requiredData.Count > 0 Then
                         For Each runningData In requiredData
                             If candleData Is Nothing Then candleData = New Dictionary(Of Date, Payload)
