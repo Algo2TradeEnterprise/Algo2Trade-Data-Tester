@@ -525,4 +525,18 @@ Public Class frmMain
         chkbAutoSelectTradingSymbol1.Enabled = True
         chkbAutoSelectTradingSymbol2.Enabled = True
     End Sub
+
+    Private Sub cmbTable1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbTable1.SelectedIndexChanged
+        If cmbTable1.SelectedIndex = 4 Then
+            chkbAutoSelectTradingSymbol1.Enabled = False
+            chkbAutoSelectTradingSymbol1.Checked = False
+        End If
+    End Sub
+
+    Private Sub cmbTable2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbTable2.SelectedIndexChanged
+        If cmbTable2.SelectedIndex = 4 Then
+            chkbAutoSelectTradingSymbol2.Enabled = False
+            chkbAutoSelectTradingSymbol2.Checked = False
+        End If
+    End Sub
 End Class

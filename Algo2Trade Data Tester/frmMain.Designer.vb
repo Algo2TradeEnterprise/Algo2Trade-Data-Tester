@@ -145,7 +145,7 @@ Partial Class frmMain
         '
         Me.cmbTable1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbTable1.FormattingEnabled = True
-        Me.cmbTable1.Items.AddRange(New Object() {"Cash", "Futures", "Commodity", "Currency"})
+        Me.cmbTable1.Items.AddRange(New Object() {"Cash", "Futures", "Commodity", "Currency", "Futures Option"})
         Me.cmbTable1.Location = New System.Drawing.Point(136, 56)
         Me.cmbTable1.Name = "cmbTable1"
         Me.cmbTable1.Size = New System.Drawing.Size(193, 24)
@@ -299,7 +299,7 @@ Partial Class frmMain
         '
         Me.cmbTable2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbTable2.FormattingEnabled = True
-        Me.cmbTable2.Items.AddRange(New Object() {"Cash", "Futures", "Commodity", "Currency"})
+        Me.cmbTable2.Items.AddRange(New Object() {"Cash", "Futures", "Commodity", "Currency", "Futures Option"})
         Me.cmbTable2.Location = New System.Drawing.Point(136, 54)
         Me.cmbTable2.Name = "cmbTable2"
         Me.cmbTable2.Size = New System.Drawing.Size(193, 24)

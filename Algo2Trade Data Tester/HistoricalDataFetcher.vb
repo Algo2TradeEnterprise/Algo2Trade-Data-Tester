@@ -122,6 +122,12 @@ Public Class HistoricalDataFetcher
                     ElseIf timeframe.Contains("Day") OrElse timeframe.Contains("Week") OrElse timeframe.Contains("Month") Then
                         table = Common.DataBaseTable.EOD_Currency
                     End If
+                Case 4
+                    If timeframe.Contains("Min") OrElse timeframe.Contains("Hour") Then
+                        table = Common.DataBaseTable.Intraday_Futures_Option
+                    ElseIf timeframe.Contains("Day") OrElse timeframe.Contains("Week") OrElse timeframe.Contains("Month") Then
+                        table = Common.DataBaseTable.EOD_Futures_Option
+                    End If
             End Select
 
             If autoSelectTradingSymbol Then
