@@ -218,6 +218,8 @@ Public Class frmMain
         End If
         rdbLive.Checked = My.Settings.Live
         rdbDatabase.Checked = My.Settings.Database
+        cmbTable1_SelectedIndexChanged(sender, e)
+        cmbTable2_SelectedIndexChanged(sender, e)
     End Sub
 
     Private Async Sub btnStart_Click(sender As Object, e As EventArgs) Handles btnStart.Click
@@ -530,6 +532,8 @@ Public Class frmMain
         If cmbTable1.SelectedIndex = 4 Then
             chkbAutoSelectTradingSymbol1.Enabled = False
             chkbAutoSelectTradingSymbol1.Checked = False
+        Else
+            chkbAutoSelectTradingSymbol1.Enabled = True
         End If
     End Sub
 
@@ -537,6 +541,8 @@ Public Class frmMain
         If cmbTable2.SelectedIndex = 4 Then
             chkbAutoSelectTradingSymbol2.Enabled = False
             chkbAutoSelectTradingSymbol2.Checked = False
+        Else
+            chkbAutoSelectTradingSymbol2.Enabled = True
         End If
     End Sub
 End Class
