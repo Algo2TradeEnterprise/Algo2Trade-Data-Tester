@@ -326,7 +326,6 @@ Public Class frmMain
             File.Copy(templateFile, outputFilename)
 
             Await WriteToExcel(outputFilename, pairData).ConfigureAwait(False)
-            OnHeartbeat("Process Complete")
 
             If MessageBox.Show("Do you want to open file?", "Algo2Trade Data Tester", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
                 Process.Start(outputFilename)
@@ -336,6 +335,7 @@ Public Class frmMain
         Catch ex As Exception
             MsgBox(ex.ToString)
         Finally
+            OnHeartbeat("Process Complete")
             SetObjectEnableDisable_ThreadSafe(btnStart, True)
             SetObjectEnableDisable_ThreadSafe(btnStop, False)
         End Try
@@ -397,15 +397,15 @@ Public Class frmMain
                         columnCounter = instrument1StartingColumn
                         mainRawData(rowCounter, columnCounter) = runningData.Key
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.TradingSymbol
+                        If lastInstrument1Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument1Data.TradingSymbol
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Open
+                        If lastInstrument1Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Open
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Low
+                        If lastInstrument1Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Low
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.High
+                        If lastInstrument1Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument1Data.High
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Close
+                        If lastInstrument1Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument1Data.Close
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = ""
                     End If
@@ -431,15 +431,15 @@ Public Class frmMain
                         columnCounter = instrument2StartingColumn
                         mainRawData(rowCounter, columnCounter) = runningData.Key
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.TradingSymbol
+                        If lastInstrument2Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument2Data.TradingSymbol
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Open
+                        If lastInstrument2Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Open
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Low
+                        If lastInstrument2Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Low
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.High
+                        If lastInstrument2Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument2Data.High
                         columnCounter += 1
-                        mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Close
+                        If lastInstrument2Data IsNot Nothing Then mainRawData(rowCounter, columnCounter) = lastInstrument2Data.Close
                         columnCounter += 1
                         mainRawData(rowCounter, columnCounter) = ""
                     End If
