@@ -452,12 +452,11 @@ Public Class frmMain
                 mainRawData = Nothing
 
                 'After Processing
-                Try
+                Dim allSheets As List(Of String) = excelWriter.GetExcelSheetsName()
+                If allSheets IsNot Nothing AndAlso Not allSheets.Contains("Settings") Then
                     excelWriter.CreateNewSheet("Settings")
-                Catch ex As Exception
-                    Console.WriteLine(ex.Message)
-                    'Ignore this error as 'Settings' sheet may be available
-                End Try
+                End If
+
                 excelWriter.SetActiveSheet("Settings")
                 excelWriter.SetData(1, 2, "Instrument 1")
                 excelWriter.SetData(1, 3, "Instrument 2")

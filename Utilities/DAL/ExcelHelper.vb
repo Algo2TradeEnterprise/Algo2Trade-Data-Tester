@@ -175,6 +175,17 @@ Namespace DAL
             OnHeartbeat("Writing from memory(array) to file")
             _wSheetInstance.Range(rangeStr, Type.Missing).Value2 = arr
         End Sub
+        Public Function GetExcelSheetsName() As List(Of String)
+            Dim ret As List(Of String) = Nothing
+            Dim sheets As Excel.Sheets = _wBookInstance.Sheets
+            If sheets IsNot Nothing AndAlso sheets.Count > 0 Then
+                For i As Integer = 1 To sheets.Count
+                    If ret Is Nothing Then ret = New List(Of String)
+                    ret.Add(sheets.Item(i).Name)
+                Next
+            End If
+            Return ret
+        End Function
         Public Sub SetColumnFormat(ByVal columnNumber As Integer, ByVal numberFormat As String)
             logger.Debug("Setting column format")
             _wSheetInstance.Columns(GetColumnName(columnNumber)).NumberFormat = numberFormat
