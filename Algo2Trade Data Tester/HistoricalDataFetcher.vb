@@ -1,6 +1,8 @@
 ﻿Imports System.IO
 Imports System.Net
+Imports System.Net.Http
 Imports System.Threading
+Imports Utilities.Network
 Imports Utilities.Strings
 
 Public Class HistoricalDataFetcher
@@ -27,8 +29,8 @@ Public Class HistoricalDataFetcher
 #End Region
 
     Private ReadOnly cts As CancellationTokenSource
-    Private ReadOnly ZerodhaHistoricalMinuteURL = "https://kitecharts-aws.zerodha.com/api/chart/{0}/minute?api_key=kitefront&access_token=K&from={1}&to={2}"
-    Private ReadOnly ZerodhaHistoricalDayURL = "https://kitecharts-aws.zerodha.com/api/chart/{0}/day?api_key=kitefront&access_token=K&from={1}&to={2}"
+    Private ReadOnly ZerodhaHistoricalMinuteURL = "https://kite.zerodha.com/oms/instruments/historical/{0}/minute?oi=1&from={1}&to={2}"
+    Private ReadOnly ZerodhaHistoricalDayURL = "https://kite.zerodha.com/oms/instruments/historical/{0}/day?&oi=1&from={1}&to={2}"
 
     Private HistoricalDataCollection As Dictionary(Of Date, PairPayload) = Nothing
 
@@ -40,33 +42,87 @@ Public Class HistoricalDataFetcher
     End Sub
 
     Private Async Function GetHistoricalMinuteCandleStickAsync(ByVal instrumentToken As String, ByVal fromDate As Date, ByVal toDate As Date) As Task(Of Dictionary(Of String, Object))
+        Dim ret As Dictionary(Of String, Object) = Nothing
         Try
             cts.Token.ThrowIfCancellationRequested()
             Dim historicalDataURL As String = String.Format(ZerodhaHistoricalMinuteURL, instrumentToken, fromDate.ToString("yyyy-MM-dd"), toDate.ToString("yyyy-MM-dd"))
             OnHeartbeat(String.Format("Fetching historical Data: {0}", historicalDataURL))
-            Using sr As New StreamReader(HttpWebRequest.Create(historicalDataURL).GetResponseAsync().Result.GetResponseStream)
-                Dim jsonString = Await sr.ReadToEndAsync.ConfigureAwait(False)
-                Dim retDictionary As Dictionary(Of String, Object) = StringManipulation.JsonDeserialize(jsonString)
-                Return retDictionary
+            ServicePointManager.Expect100Continue = False
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+            ServicePointManager.ServerCertificateValidationCallback = Function(s, Ca, CaC, sslPE)
+                                                                          Return True
+                                                                      End Function
+            Using browser As New HttpBrowser(Nothing, Net.DecompressionMethods.GZip Or DecompressionMethods.Deflate Or DecompressionMethods.None, New TimeSpan(0, 1, 0), cts)
+                Dim headers As New Dictionary(Of String, String)
+                headers.Add("Host", "kite.zerodha.com")
+                headers.Add("Accept", "*/*")
+                headers.Add("Accept-Encoding", "gzip, deflate")
+                headers.Add("Accept-Language", "en-US,en;q=0.9,hi;q=0.8,ko;q=0.7")
+                headers.Add("Authorization", String.Format("enctoken {0}", "uOyTuT1gvxvWD+WDfUNgrysv1w06ayS7vQBaPr3GSfZ0QwqUJEPB16JBmIBvMrhOC/II6QJzq9Id5vRXVRJjsXi92nLGRg=="))
+                headers.Add("Referer", "https://kite.zerodha.com/static/build/chart.html?v=2.4.0")
+                headers.Add("sec-fetch-mode", "cors")
+                headers.Add("sec-fetch-site", "same-origin")
+                headers.Add("Connection", "keep-alive")
+
+                cts.Token.ThrowIfCancellationRequested()
+                Dim l As Tuple(Of Uri, Object) = Await browser.NonPOSTRequestAsync(historicalDataURL,
+                                                                                        HttpMethod.Get,
+                                                                                        Nothing,
+                                                                                        False,
+                                                                                        headers,
+                                                                                        True,
+                                                                                        "application/json").ConfigureAwait(False)
+                cts.Token.ThrowIfCancellationRequested()
+                If l IsNot Nothing AndAlso l.Item2 IsNot Nothing Then
+                    ret = l.Item2
+                End If
             End Using
         Catch ex As Exception
             Throw ex
         End Try
+        Return ret
     End Function
 
     Private Async Function GetHistoricalDayCandleStickAsync(ByVal instrumentToken As String, ByVal fromDate As Date, ByVal toDate As Date) As Task(Of Dictionary(Of String, Object))
+        Dim ret As Dictionary(Of String, Object) = Nothing
         Try
             cts.Token.ThrowIfCancellationRequested()
             Dim historicalDataURL As String = String.Format(ZerodhaHistoricalDayURL, instrumentToken, fromDate.ToString("yyyy-MM-dd"), toDate.ToString("yyyy-MM-dd"))
             OnHeartbeat(String.Format("Fetching historical Data: {0}", historicalDataURL))
-            Using sr As New StreamReader(HttpWebRequest.Create(historicalDataURL).GetResponseAsync().Result.GetResponseStream)
-                Dim jsonString = Await sr.ReadToEndAsync.ConfigureAwait(False)
-                Dim retDictionary As Dictionary(Of String, Object) = StringManipulation.JsonDeserialize(jsonString)
-                Return retDictionary
+            ServicePointManager.Expect100Continue = False
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+            ServicePointManager.ServerCertificateValidationCallback = Function(s, Ca, CaC, sslPE)
+                                                                          Return True
+                                                                      End Function
+            Using browser As New HttpBrowser(Nothing, Net.DecompressionMethods.GZip Or DecompressionMethods.Deflate Or DecompressionMethods.None, New TimeSpan(0, 1, 0), cts)
+                Dim headers As New Dictionary(Of String, String)
+                headers.Add("Host", "kite.zerodha.com")
+                headers.Add("Accept", "*/*")
+                headers.Add("Accept-Encoding", "gzip, deflate")
+                headers.Add("Accept-Language", "en-US,en;q=0.9,hi;q=0.8,ko;q=0.7")
+                headers.Add("Authorization", String.Format("enctoken {0}", "uOyTuT1gvxvWD+WDfUNgrysv1w06ayS7vQBaPr3GSfZ0QwqUJEPB16JBmIBvMrhOC/II6QJzq9Id5vRXVRJjsXi92nLGRg=="))
+                headers.Add("Referer", "https://kite.zerodha.com/static/build/chart.html?v=2.4.0")
+                headers.Add("sec-fetch-mode", "cors")
+                headers.Add("sec-fetch-site", "same-origin")
+                headers.Add("Connection", "keep-alive")
+
+                cts.Token.ThrowIfCancellationRequested()
+                Dim l As Tuple(Of Uri, Object) = Await browser.NonPOSTRequestAsync(historicalDataURL,
+                                                                                        HttpMethod.Get,
+                                                                                        Nothing,
+                                                                                        False,
+                                                                                        headers,
+                                                                                        True,
+                                                                                        "application/json").ConfigureAwait(False)
+                cts.Token.ThrowIfCancellationRequested()
+                If l IsNot Nothing AndAlso l.Item2 IsNot Nothing Then
+                    ret = l.Item2
+                End If
             End Using
         Catch ex As Exception
             Throw ex
         End Try
+        Return ret
     End Function
 
     Public Async Function GetInstrumentsData(ByVal instrumentsDetails As PairSymbolDetails, ByVal fromDate As Date, ByVal toDate As Date) As Task(Of Dictionary(Of Date, PairPayload))
