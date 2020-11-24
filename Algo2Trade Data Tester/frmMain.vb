@@ -451,6 +451,13 @@ Public Class frmMain
                 Erase mainRawData
                 mainRawData = Nothing
 
+                Dim lastRow As Long = excelWriter.GetLastRow()
+                Dim lastCol As Long = excelWriter.GetLastCol()
+                Dim lastColRow As Long = excelWriter.GetLastRow(lastCol)
+                If lastColRow > lastRow Then
+                    excelWriter.DeleteRow(lastRow + 1, lastColRow)
+                End If
+
                 'After Processing
                 Dim allSheets As List(Of String) = excelWriter.GetExcelSheetsName()
                 If allSheets IsNot Nothing AndAlso Not allSheets.Contains("Settings") Then

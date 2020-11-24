@@ -509,6 +509,13 @@ Namespace DAL
             rg.Delete()
             rg = Nothing
         End Sub
+        Public Sub DeleteRow(ByVal startRow As Integer, ByVal endRow As Integer)
+            logger.Debug("Deleting row")
+            Dim rg As Excel.Range = _wSheetInstance.Rows(String.Format("{0}:{1}", startRow, endRow)) ' delete the specific row
+            rg.Select()
+            rg.Delete()
+            rg = Nothing
+        End Sub
         Public Sub DeleteColumn(ByVal columnCtr As Integer)
             logger.Debug("Deleting column")
             Dim rg As Excel.Range = _wSheetInstance.Columns(String.Format("{0}:{1}", GetColumnName(columnCtr), GetColumnName(columnCtr))) ' delete the specific row
@@ -652,6 +659,11 @@ Namespace DAL
             logger.Debug("Getting last row")
             Dim fullRows As Long = _wSheetInstance.Rows.Count
             Return _wSheetInstance.Cells(fullRows, 1).End(Excel.XlDirection.xlUp).Row
+        End Function
+        Public Function GetLastRow(ByVal columnNumber As Integer)
+            'Console.WriteLine("Getting last row")
+            Dim fullRows As Long = _wSheetInstance.Rows.Count
+            Return _wSheetInstance.Cells(fullRows, columnNumber).End(Excel.XlDirection.xlUp).Row
         End Function
         Public Function GetLastCol() As Long
             logger.Debug("Getting last col")
