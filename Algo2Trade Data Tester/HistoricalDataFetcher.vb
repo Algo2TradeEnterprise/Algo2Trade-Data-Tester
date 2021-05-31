@@ -144,9 +144,9 @@ Public Class HistoricalDataFetcher
     End Function
 
     Private Async Function ProcessData(ByVal tableIndex As Integer, ByVal autoSelectTradingSymbol As Boolean,
-                                    ByVal timeframe As String, ByVal exchangeStartTime As Date,
-                                    ByVal instrumentName As String, ByVal token As String,
-                                    ByVal fromDate As Date, ByVal toDate As Date, ByVal instrumentNumber As Integer) As Task
+                                        ByVal timeframe As String, ByVal exchangeStartTime As Date,
+                                        ByVal instrumentName As String, ByVal token As String,
+                                        ByVal fromDate As Date, ByVal toDate As Date, ByVal instrumentNumber As Integer) As Task
         Dim candleData As Dictionary(Of Date, Payload) = Nothing
         If _database Then
             Dim cmn As Common = New Common(cts)
@@ -158,7 +158,7 @@ Public Class HistoricalDataFetcher
                     If timeframe.Contains("Min") OrElse timeframe.Contains("Hour") Then
                         table = Common.DataBaseTable.Intraday_Cash
                     ElseIf timeframe.Contains("Day") OrElse timeframe.Contains("Week") OrElse timeframe.Contains("Month") Then
-                        table = Common.DataBaseTable.EOD_Cash
+                        table = Common.DataBaseTable.EOD_POSITIONAL
                     End If
                 Case 1
                     If timeframe.Contains("Min") OrElse timeframe.Contains("Hour") Then
